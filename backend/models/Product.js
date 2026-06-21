@@ -40,9 +40,10 @@ const productSchema = new mongoose.Schema({
     ,
     category:
     {
-      type:String,
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"Category",
       required:true,
-      enum: ["Egg", "Meat", "Tool"],
+      index:true,
     },
 
     rating:{
@@ -57,6 +58,7 @@ const productSchema = new mongoose.Schema({
          {
             url:{
                 type:String,
+                required:true,
             }
             ,
             publicId:{
@@ -86,6 +88,7 @@ productSchema.pre("save", async function(next){
 productSchema.index({
     title:"text",
     description:"text",
+    sku:"text"
 })
 
 const Product = mongoose.model("Product",productSchema);
