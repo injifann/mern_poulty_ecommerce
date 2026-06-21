@@ -5,9 +5,16 @@ const productSchema = new mongoose.Schema({
     title:{
      type:String,
      required:true,
-     unique:true,
      trim:true,
      
+    },
+    sku:
+    {
+       type:String,
+       required:true,
+       unique:true,
+       uppercase:true,
+       trim:true,
     },
     description: {
         type: String,
@@ -54,6 +61,7 @@ const productSchema = new mongoose.Schema({
             ,
             publicId:{
                 type:String,
+                required:true,
             },
             alt:{
                 type:String,
@@ -81,3 +89,4 @@ productSchema.index({
 })
 
 const Product = mongoose.model("Product",productSchema);
+export default Product;
