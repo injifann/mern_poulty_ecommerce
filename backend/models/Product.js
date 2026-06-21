@@ -15,6 +15,7 @@ const productSchema = new mongoose.Schema({
        unique:true,
        uppercase:true,
        trim:true,
+       index:true,
     },
     description: {
         type: String,
@@ -46,13 +47,16 @@ const productSchema = new mongoose.Schema({
       index:true,
     },
 
-    rating:{
-        type:Number, 
-        default:0,
-        min:0,
-        max:5
-    }
-    ,
+    averageRating: {
+    type: Number,
+    default: 0,
+    },
+
+    numReviews: {
+    type: Number,
+    default: 0,
+    },
+        
 
     images:[
          {
@@ -93,3 +97,4 @@ productSchema.index({
 
 const Product = mongoose.model("Product",productSchema);
 export default Product;
+
