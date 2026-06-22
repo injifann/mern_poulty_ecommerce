@@ -2,43 +2,38 @@ import mongoose from "mongoose";
 import Product from "../models/Product.js";
 import { generateUniqueSKU } from "../utilities/generateUniqueSKU.js";
 import {cloudinary} from '../config/cloudinary.js';
+import { sendErrorResponse } from "../utilities/sendErrorResponse.js";
 
-export const addProduct = async (req , res)=>{
+export const addProduct = async (req , res,next)=>{
 
     const {title,description,price,quantity,category}=req.body;
 
     if(!title|| !description || price===undefined || quantity===undefined || !category)
     {
-        return res.status(400).json({message:"please Enter all fields"});
+        sendErrorResponse(res,400,"please Enter all fields")
     }
 
     if(!req.files || req.files.length===0)
     {
-        return res.status(400).json({message:"please upload images"});
+        sendErrorResponse(res,400,"please upload images")
     }
-
-
     try
     {    
         if( await Product.findOne({title:title, category:category}))
          {
-            return res.status(409).json({message:"this product already exist with the same title and category"});
+            sendErrorResponse(res,400,"this product already exist with the same title and category")
          }
         
         const sku=await generateUniqueSKU(category,title);
-
         const upLoadedImages=[];
 
-         
         for (const file of req.files)
         {
               const result=await cloudinary.uploader.upload(file.path,{folder:"products" });
-
               upLoadedImages.push({ url:result.secure_url,publicId:result.public_id,alt:title})
         }
 
         upLoadedImages[0].isPrimary=true;
-
 
         const products = await Product.create({title,sku,description,price,quantity,category,images:upLoadedImages});
         return res.status(201).json({message:"successfully created product",products});
@@ -46,7 +41,7 @@ export const addProduct = async (req , res)=>{
     }
     catch(error)
     {
-      return res.status(500).json({message:error.message});
+      next(error)
     }
 
 }
@@ -66,7 +61,7 @@ export const updateProduct = async(req,res)=>
 
             if(!productExist)
             {
-              return res.status(400).json({message:"this product is not in the list . please add it first"});
+              sendErrorResponse(res,400,"this product is not in the list . please add it first");
             }
 
             const upLoadedImages=[];
@@ -91,8 +86,6 @@ export const updateProduct = async(req,res)=>
             if(category) updateFields.category=category;
             if(upLoadedImages.length>0) updateFields.images=upLoadedImages;
 
-
-
            const updatedProduct = await Product.findByIdAndUpdate(req.params.id,updateFields,{new:true,runValidators:true});
            return res.status(201).json({message:"successfully updated",product:updatedProduct});
 
@@ -100,7 +93,7 @@ export const updateProduct = async(req,res)=>
        }
        catch(error)
        {
-         return res.status(500).json({message:error.message});
+        next(error)
        }
 
 }
@@ -111,7 +104,7 @@ export const deleteProduct = async (req,res)=>{
        const product = await Product.findById(req.params.id);
        if(!product)
        {
-        return res.status(404).json({message:"product not found"});
+        sendErrorResponse(res,404,"product not found")
        }
        if(product.images && product.images.length>0)
         {
@@ -127,6 +120,6 @@ export const deleteProduct = async (req,res)=>{
     }
     catch(error)
     {
-       return res.status(500).json({message:error.message});
+      next(error)
     }
 }

@@ -1,6 +1,7 @@
 import Product from '../models/Product.js'
 import Review from '../models/Review.js';
 import { updateProductRating } from '../utilities/updateProductRating.js';
+import { sendErrorResponse } from '../utilities/sendErrorResponse.js';
 
 
 export const getAllProducts = async(req,res)=>
@@ -16,24 +17,23 @@ export const getAllProducts = async(req,res)=>
         }
  }
 
-
  export const rateProduct = async (req,res)=>{
    const{rating} = req.body;
    if(rating === undefined)
    {
-    return res.status(400).json({message:"Please rate the product first"});
+    sendErrorResponse(res,400,"Please rate the product first")
    }
    try
    {
      const product = await Product.findById(req.params.id);
      if(!product)
     {
-        return res.status(404).json({message:"Product not found"});
+      sendErrorResponse(res,404,"Product not found")
      }
 
      const reviewExist = await Review.findOne({user:req.user._id,product:product._id,});
-
-     if(reviewExist) return res.status(400).json({message:"you have already rated the product"});
+     
+     if(reviewExist) {sendErrorResponse(res,400,"you have already rated the product")};
      
      await Review.create({user:req.user._id,product:product._id,rating});
      await updateProductRating(product._id);

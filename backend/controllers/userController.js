@@ -2,6 +2,7 @@ import { generateToken } from "../utilities/generateToken.js";
 import User from "../models/User.js"
 import { OAuth2Client } from "google-auth-library";
 import { sendAuthResponse } from "../utilities/sendAuthResponse.js";
+import { sendErrorResponse } from "../utilities/sendErrorResponse.js";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -43,6 +44,7 @@ export const register = async (req,res,next) =>
   if(!userName || !email || !password)
   {
     return res.status(400).json({message:"please fill all fields"});
+    sendErrorResponse(res,400,"please fill all fields");
   }
 
   try
@@ -50,7 +52,7 @@ export const register = async (req,res,next) =>
    const userExist  = await User.findOne({email});
     if(userExist)
     {
-       return res.status(400).json({message:"this email is already registered. please login with your credentials"});
+       sendErrorResponse(res,400,"this email is already registered. please login with your credentials");
     }
     const user = await User.create({userName,email,password});
     sendAuthResponse(res,201,"account successfully created",user);
@@ -63,14 +65,14 @@ export const register = async (req,res,next) =>
 export const login = async (req,res,next) =>
 {
     const {email,password} = req.body;
-    if(!email || !password){ return res.status(400).json({message:"please enter all information"})};
-
+    if(!email || !password){ sendErrorResponse(res,400,"please enter all information")};
+      
     try
     {
         const user = await User.findOne({email});
-        if(!user){return res.status(401).json({message:"invalid password or email"})};
-        if(!await user.checkPassword(password)){ return res.status(401).json({message:"invalid password or email"})};
-        sendAuthResponse(res,200,"Login successful",user)
+        if(!user){sendErrorResponse(res,401,"invalid password or email")};
+        if(!await user.checkPassword(password)){sendErrorResponse(res,401,"invalid password or email")};
+        sendAuthResponse(res,200,"Login successful",user);
     }
     catch(error)
     {
@@ -80,7 +82,7 @@ export const login = async (req,res,next) =>
 }
 export const me = async(req,res)=>
 { if (!req.user) {
-    return res.status(401).json({ message: 'User not found' });
+    {sendErrorResponse(res,401,"User not found'")};
   }
   return res.status(200).json(req.user);
 }

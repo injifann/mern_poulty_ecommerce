@@ -4,10 +4,15 @@ import Product from "../models/Product";
 import { validateQuantity } from "../utilities/validateQuantity";
 import { getValidProduct } from "../utilities/getValidProduct";
 import { findCart } from "../utilities/findCart";
+import { sendErrorResponse } from "../utilities/sendErrorResponse";
 
 export const addToCart = async (req,res,next) =>
 {
     const {productId,quantity} = req.body;
+    if(!productId|| !quantity)
+    {
+      sendErrorResponse(res,400,"please enter product and and quantity");
+    }
     try
     {   
         const validQuantity = validateQuantity(quantity);
@@ -16,9 +21,9 @@ export const addToCart = async (req,res,next) =>
          let cart = await findCart(req.user._id,true);
 
          if(!cart)
-        { if(product.quantity<validQuantity){ return res.status(400).json({message:"in sufficient stock"});}
-          await Cart.create({user:req.user._id,items:[{product:productId,quantity:quantity,priceAtTimeOfOrder:product.price}]});
-          return res.status(201).json({message:"cart successfully created"});
+        { if(product.quantity<validQuantity){ sendErrorResponse(res,400,"in sufficient stock");}
+          cart = await Cart.create({user:req.user._id,items:[{product:productId,quantity:quantity,priceAtTimeOfOrder:product.price}]});
+          return res.status(201).json({message:"cart successfully created",cart});
         }
 
         const existItemIndex = cart.items.findIndex((item)=>item.product.toString()===productId);
@@ -32,8 +37,8 @@ export const addToCart = async (req,res,next) =>
         {   if(product.quantity<validQuantity){ return res.status(400).json({message:"in sufficient stock"});}
             cart.items.push({product:productId,quantity:validQuantity,priceAtTimeOfOrder:product.price})
         }
-        await cart.save();
-        return res.status(200).json({ message: "cart successfully updated"});
+        cart = await cart.save();
+        return res.status(200).json({ message: "cart successfully updated",cart});
 
     }
     catch(error)
@@ -55,7 +60,7 @@ export const RemoveProductFromCart = async (req,res,next)=>
     const itemExist = cart.items.some(item=>item.product.toString()===productId.toString());
     if(!itemExist)
     {
-           return res.status(404).json({message:"product does not exist in the cart"});
+           sendErrorResponse(res,404,"product does not exist in the cart")
     }
     cart.items = cart.items.filter(item=>item.product.toString()!==productId.toString());
     await cart.save();
@@ -81,10 +86,10 @@ export const updateCartQuantity = async (req,res,next)=>
 
        const itemIndex = cart.items.findIndex(item=>item.product.toString()===productId.toString());
 
-       if(itemIndex === -1){return res.status(404).json({message:"product does not found in a cart"})};
+       if(itemIndex === -1){sendErrorResponse(res,404,"product does not found in a cart")};
        if(product.quantity < validQuantity)
        {
-        return res.status(400).json({message:"insufficient stock. Only ${product.quantity} items available"});
+        sendErrorResponse(res,400,"insufficient stock");
        }
 
        if(validQuantity === 0)
