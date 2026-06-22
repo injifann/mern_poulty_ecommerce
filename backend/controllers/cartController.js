@@ -24,7 +24,7 @@ export const addToCart = async (req,res,next) =>
         const existItemIndex = cart.items.findIndex((item)=>item.product.toString()===productId);
 
         if(existItemIndex>-1)
-        {   if(product.quantity<validQuantity +cart.items[existItemIndex]){ return res.status(400).json({message:"product is out of stock"});}
+        {   if(product.quantity<validQuantity +cart.items[existItemIndex].quantity){ return res.status(400).json({message:"product is out of stock"});}
             cart.items[existItemIndex].quantity += validQuantity;
             cart.items[existItemIndex].priceAtTimeOfOrder = product.price;
         }
