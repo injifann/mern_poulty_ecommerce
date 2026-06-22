@@ -22,7 +22,7 @@ const cartSchema = new mongoose.Schema({
             min:1,
          },
 
-         price:
+         priceAtTimeOfOrder:
          { type:Number,
             required:true,
 
@@ -52,7 +52,7 @@ cartSchema.pre("save",async function(next){
 cartSchema.methods.calculateTotals=function()
 {
     this.totalItems=this.items.reduce((sum,item)=>sum +item.quantity,0 );
-    this.totalAmount=this.items.reduce((sum,item)=>sum + (item.quantity *item.price),0);
+    this.totalAmount=this.items.reduce((sum,item)=>sum + (item.quantity *item.priceAtTimeOfOrder),0);
 
 }
 const Cart = mongoose.model("Cart",cartSchema);
