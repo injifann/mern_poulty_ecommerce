@@ -1,18 +1,18 @@
 import mongoose from "mongoose";
 import Cart from "../models/Cart";
+import AppError from "./CustomError";
 
 export const findCart = async (userId,isReturn)=>
 {
-     const cart = await Cart.findOne({user:userId})
+     const cart = await Cart.findOne({user:userId});
+
     if(isReturn) {return cart}
 
     if(!cart)
     {
-        throw error ({
-            status:404,
-            message:"cart does not found";
-        })
+            
+        throw new AppError ("cart does not found",404)
     }
 
- 
+ return cart;
 }

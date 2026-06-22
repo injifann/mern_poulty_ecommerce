@@ -5,7 +5,7 @@ export const updateProductRating = async (productId)=>
 {
   try
   {
-    const reviews = await Review.find({productId});
+    const reviews = await Review.find({product:productId});
     const totalReview=reviews.length;
      
     const totalRating = reviews.reduce((sum,reveiw)=>sum+reveiw.rating,0);

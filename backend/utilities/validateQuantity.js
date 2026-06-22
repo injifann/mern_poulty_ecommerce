@@ -3,11 +3,13 @@ export const validateQuantity = (quantity)=>
 {
  if(quantity === undefined)
  {
-    throw new Error({status:400,message:"please Enter product quantity"});
+        throw new AppError ("please Enter product quantity",404)
+
  }
  if(quantity < 0)
  {
-    throw new Error ({status:400,message:"quantity cannot be less than 0"});
+    throw new AppError ("quantity cannot be less than 0",404)
+
  }
  return quantity
 }

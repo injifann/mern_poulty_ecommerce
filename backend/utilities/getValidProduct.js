@@ -1,34 +1,31 @@
 import mongoose from "mongoose";
 import Product from "../models/Product";
 
-export const getValidProduct = async(productId,quantity,isretun)=>
+export const getValidProduct = async(productId,isretun)=>
 {
  if(!productId)
   {
-   throw("please Enter Product id");
+   throw new AppError ("please Enter product id",404)
  }
  if(!mongoose.Types.ObjectId.isValid(productId))
   {
-    throw error( {status:400,message:"invalid product id"});
+    throw new AppError ("invalid product id",404)
+
  }
   if(isretun)
   {
   const product = await Product.findById(productId);
   if(!product)
   {
-    throw error ({status:404,message:"product does not exist"});
+    throw new AppError ("product does not exist",404)
+
   }
 
   if(product.status==="out_of_stock")
   {
-    throw error({status:400,message:"product is out of stock"});
-  }
+    throw new AppError ("product is out of stock",404)
 
-  if(product.quantity <quantity)
-  {
-    throw error ({status:404,message:"product is out of stock"});
   }
-
    return product
 }
 return productId;
