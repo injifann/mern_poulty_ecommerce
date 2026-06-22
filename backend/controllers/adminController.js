@@ -40,8 +40,8 @@ export const addProduct = async (req , res)=>{
         upLoadedImages[0].isPrimary=true;
 
 
-        const product = await Product.create({title,sku,description,price,quantity,category,images:upLoadedImages});
-        return res.status(201).json({message:"successfully created product",product});
+        const products = await Product.create({title,sku,description,price,quantity,category,images:upLoadedImages});
+        return res.status(201).json({message:"successfully created product",products});
     
     }
     catch(error)
@@ -103,4 +103,30 @@ export const updateProduct = async(req,res)=>
          return res.status(500).json({message:error.message});
        }
 
+}
+
+export const deleteProduct = async (req,res)=>{
+    try
+    {
+       const product = await Product.findById(req.params.id);
+       if(!product)
+       {
+        return res.status(404).json({message:"product not found"});
+       }
+       if(product.images && product.images.length>0)
+        {
+          for (const img of product.images)
+          {
+            if(img.publicId)
+            {  await cloudinary.uploader.destroy(img.publicId)
+            }
+          }
+       }
+       await Product.findByIdAndDelete(req.params.id);
+       return res.status(200).json({message:"Product deleted successfully"});
+    }
+    catch(error)
+    {
+       return res.status(500).json({message:error.message});
+    }
 }
