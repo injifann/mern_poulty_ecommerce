@@ -12,7 +12,7 @@ export const addToCart = async (req,res,next) =>
     const {productId,quantity} = req.body;
     if(!productId|| !quantity)
     {
-      sendErrorResponse(res,400,"please enter product and and quantity");
+      return sendErrorResponse(res,400,"please enter product and and quantity");
     }
     try
     {   
@@ -21,7 +21,7 @@ export const addToCart = async (req,res,next) =>
 
          let cart = await findCart(req.user._id,true);
          if(!cart)
-          { if(product.quantity<validQuantity){ sendErrorResponse(res,400,"in sufficient stock");}
+          { if(product.quantity<validQuantity){ return sendErrorResponse(res,400,"in sufficient stock");}
             cart = await Cart.create({user:req.user._id,items:[{product:productId,quantity:quantity,priceAtTimeOfOrder:product.price}]});
             sendCartResponse(res,201,"cart successfully created",cart);
           }
@@ -29,13 +29,13 @@ export const addToCart = async (req,res,next) =>
         const existItemIndex = cart.items.findIndex((item)=>item.product.toString()===productId);
 
         if(existItemIndex>-1)
-        {   if(product.quantity<validQuantity +cart.items[existItemIndex].quantity){ sendErrorResponse(res,400,"product is out of stock")}
+        {   if(product.quantity<validQuantity +cart.items[existItemIndex].quantity){ return sendErrorResponse(res,400,"product is out of stock")}
             cart.items[existItemIndex].quantity += validQuantity;            
 
             cart.items[existItemIndex].priceAtTimeOfOrder = product.price;
         }
         else
-        {   if(product.quantity<validQuantity){ sendErrorResponse(res,400,"insufficient stock")}
+        {   if(product.quantity<validQuantity){ return sendErrorResponse(res,400,"insufficient stock")}
             cart.items.push({product:productId,quantity:validQuantity,priceAtTimeOfOrder:product.price})
         }
         cart = await cart.save();
@@ -60,7 +60,7 @@ export const RemoveProductFromCart = async (req,res,next)=>
     const itemExist = cart.items.some(item=>item.product.toString()===productId.toString());
     if(!itemExist)
     {
-       sendErrorResponse(res,404,"product does not exist in the cart")
+       return sendErrorResponse(res,404,"product does not exist in the cart")
     }
     cart.items = cart.items.filter(item=>item.product.toString()!==productId.toString());
     cart = await cart.save();
@@ -86,23 +86,23 @@ export const updateCartQuantity = async (req,res,next)=>
 
        const itemIndex = cart.items.findIndex(item=>item.product.toString()===productId.toString());
 
-       if(itemIndex === -1){sendErrorResponse(res,404,"product does not found in a cart")};
+       if(itemIndex === -1){ return sendErrorResponse(res,404,"product does not found in a cart")};
        if(product.quantity < validQuantity)
        {
-        sendErrorResponse(res,400,"insufficient stock");
+        return sendErrorResponse(res,400,"insufficient stock");
        }
 
        if(validQuantity === 0)
        {
         cart.items = cart.items.filter((item,index)=>index !==itemIndex);
         cart = await cart.save();
-        sendCartResponse(res,200,"successfully removed product form cart",cart);
+        return sendCartResponse(res,200,"successfully removed product form cart",cart);
 
        }
 
         cart.items[itemIndex].quantity=validQuantity;
         cart = await cart.save();
-        sendCartResponse(res,200,"successfully updated",cart);
+        return sendCartResponse(res,200,"successfully updated",cart);
 
     }
     catch(error)

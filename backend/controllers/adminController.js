@@ -10,18 +10,18 @@ export const addProduct = async (req , res,next)=>{
 
     if(!title|| !description || price===undefined || quantity===undefined || !category)
     {
-        sendErrorResponse(res,400,"please Enter all fields")
+        return sendErrorResponse(res,400,"please Enter all fields")
     }
 
     if(!req.files || req.files.length===0)
     {
-        sendErrorResponse(res,400,"please upload images")
+        return sendErrorResponse(res,400,"please upload images")
     }
     try
     {    
         if( await Product.findOne({title:title, category:category}))
          {
-            sendErrorResponse(res,400,"this product already exist with the same title and category")
+            return sendErrorResponse(res,400,"this product already exist with the same title and category")
          }
         
         const sku=await generateUniqueSKU(category,title);
@@ -61,7 +61,7 @@ export const updateProduct = async(req,res)=>
 
             if(!productExist)
             {
-              sendErrorResponse(res,400,"this product is not in the list . please add it first");
+              return sendErrorResponse(res,400,"this product is not in the list . please add it first");
             }
 
             const upLoadedImages=[];
@@ -104,7 +104,7 @@ export const deleteProduct = async (req,res)=>{
        const product = await Product.findById(req.params.id);
        if(!product)
        {
-        sendErrorResponse(res,404,"product not found")
+        return sendErrorResponse(res,404,"product not found")
        }
        if(product.images && product.images.length>0)
         {

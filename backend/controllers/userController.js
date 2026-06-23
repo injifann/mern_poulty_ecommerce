@@ -13,7 +13,7 @@ export const googleAuth = async (req,res,next)=>
   {
     const ticket = await client.verifyIdToken({idToken:token,audience:process.env.GOOGLE_CLIENT_ID});
     const payLoad = ticket.getPayload();
-    if(!payLoad || !payLoad.email){return res.status(400).json({message:"Invalid google token"})};
+    if(!payLoad || !payLoad.email){return sendErrorResponse(res,400,"invalid google token")};
 
     const{sub,name,email} = payLoad;
 
@@ -27,9 +27,9 @@ export const googleAuth = async (req,res,next)=>
         if(!user.googleId)
         { user.googleId=sub;
           await user.save();
-          sendAuthResponse(res,200,"google account successfully linked",user)
+          return sendAuthResponse(res,200,"google account successfully linked",user)
         }
-       sendAuthResponse(res,200,"successfully logged in",user);
+       return sendAuthResponse(res,200,"successfully logged in",user);
   }
   catch(error)
   {
@@ -43,7 +43,7 @@ export const register = async (req,res,next) =>
 
   if(!userName || !email || !password)
   {
-    sendErrorResponse(res,400,"please fill all fields");
+    return sendErrorResponse(res,400,"please fill all fields");
   }
 
   try
@@ -51,10 +51,10 @@ export const register = async (req,res,next) =>
    const userExist  = await User.findOne({email});
     if(userExist)
     {
-       sendErrorResponse(res,400,"this email is already registered. please login with your credentials");
+       return sendErrorResponse(res,400,"this email is already registered. please login with your credentials");
     }
     const user = await User.create({userName,email,password});
-    sendAuthResponse(res,201,"account successfully created",user);
+    return sendAuthResponse(res,201,"account successfully created",user);
   }
   catch(error)
   {
@@ -64,13 +64,13 @@ export const register = async (req,res,next) =>
 export const login = async (req,res,next) =>
 {
     const {email,password} = req.body;
-    if(!email || !password){ sendErrorResponse(res,400,"please enter all information")};
+    if(!email || !password){return sendErrorResponse(res,400,"please enter all information")};
       
     try
     {
         const user = await User.findOne({email});
-        if(!user){sendErrorResponse(res,401,"invalid password or email")};
-        if(!await user.checkPassword(password)){sendErrorResponse(res,401,"invalid password or email")};
+        if(!user){return sendErrorResponse(res,401,"invalid password or email")};
+        if(!await user.checkPassword(password)){return sendErrorResponse(res,401,"invalid password or email")};
         sendAuthResponse(res,200,"Login successful",user);
     }
     catch(error)
@@ -81,7 +81,7 @@ export const login = async (req,res,next) =>
 }
 export const me = async(req,res)=>
 { if (!req.user) {
-    {sendErrorResponse(res,401,"User not found'")};
+    {return sendErrorResponse(res,401,"User not found'")};
   }
   return res.status(200).json(req.user);
 }

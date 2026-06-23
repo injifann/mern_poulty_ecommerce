@@ -9,9 +9,13 @@ export const getAllProducts = async(req,res)=>
         try
         {
          const {category,search } = req.query;
+
          let query = {};
-         if(category){query.category = category; } 
-         const products = await Product.find().sort({createdAt:-1});
+
+         if(category){query.category = category} 
+         if(search){query.title={$regex:search,$options:'i'}};
+
+         const products = await Product.find(query).populate("category","name slug").sort({createdAt:-1});
          return res.status(200).json({message:"successfull",products});
         }
         catch(error)
@@ -24,19 +28,19 @@ export const getAllProducts = async(req,res)=>
    const{rating} = req.body;
    if(rating === undefined)
    {
-    sendErrorResponse(res,400,"Please rate the product first")
+    return sendErrorResponse(res,400,"Please rate the product first")
    }
    try
    {
      const product = await Product.findById(req.params.id);
      if(!product)
     {
-      sendErrorResponse(res,404,"Product not found")
+    return sendErrorResponse(res,404,"Product not found")
      }
 
      const reviewExist = await Review.findOne({user:req.user._id,product:product._id,});
      
-     if(reviewExist) {sendErrorResponse(res,400,"you have already rated the product")};
+     if(reviewExist) {return sendErrorResponse(res,400,"you have already rated the product")};
      
      await Review.create({user:req.user._id,product:product._id,rating});
      await updateProductRating(product._id);
