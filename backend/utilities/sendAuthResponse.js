@@ -1,4 +1,4 @@
-import { generateToken } from "./generateToken"
+import { generateToken } from "./generateToken.js"
 
 export const sendAuthResponse = async (res,statusCode,message , user)=>
 {
