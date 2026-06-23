@@ -10,8 +10,9 @@ const app = express();
 dotenv.config();
 const port=process.env.PORT || 5001;
 app.use(express.json());
+app.use("/uploads", express.static("uploads"));
 app.use("/api/user",userRouter);
-app.use("/admin",adminRoutes);
+app.use("/api/admin",adminRoutes);
 app.use(errorHandler);
 
 connectDB();
