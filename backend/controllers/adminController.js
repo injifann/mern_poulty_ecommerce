@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Product from "../models/Product.js";
 import { generateUniqueSKU } from "../utilities/generateUniqueSKU.js";
-import {cloudinary} from '../config/cloudinary.js';
+import cloudinary from '../config/cloudinary.js';
 import { sendErrorResponse } from "../utilities/sendErrorResponse.js";
 
 export const addProduct = async (req , res,next)=>{
