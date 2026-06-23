@@ -2,6 +2,8 @@ import Product from '../models/Product.js'
 import Review from '../models/Review.js';
 import { updateProductRating } from '../utilities/updateProductRating.js';
 import { sendErrorResponse } from '../utilities/sendErrorResponse.js';
+import Category from '../models/Category.js';
+import { isValidObjectId } from '../utilities/isValidObjectId.js';
 
 
 export const getAllProducts = async(req,res)=>
@@ -24,6 +26,33 @@ export const getAllProducts = async(req,res)=>
         }
  }
 
+ export const getProductByCategory = async (req,res,next)=>
+{
+    const {categoryId} = req.params.id;
+    if(!isValidObjectId(categoryId))
+    {
+      return sendErrorResponse(res,400,"invalid category id");
+    }
+    try
+    {
+      const category = await Category.findById(categoryId);
+      if(!category)
+      {
+        return sendErrorResponse(res,404,"category does not exist");
+      }
+      const products = await Product.find({category:categoryId}).populate("category","name");
+      if(!products || products.length === 0)
+      {
+        sendErrorResponse(res,404,"no product with this category");
+      }
+      return res.status(200).json({message:"successfully fetched",products})
+    }
+    catch(error)
+    {
+      next(error);
+    }
+}
+
  export const rateProduct = async (req,res)=>{
    const{rating} = req.body;
    if(rating === undefined)
@@ -35,8 +64,8 @@ export const getAllProducts = async(req,res)=>
      const product = await Product.findById(req.params.id);
      if(!product)
     {
-    return sendErrorResponse(res,404,"Product not found")
-     }
+     return sendErrorResponse(res,404,"Product not found")
+    }
 
      const reviewExist = await Review.findOne({user:req.user._id,product:product._id,});
      
