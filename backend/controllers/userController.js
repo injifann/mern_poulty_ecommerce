@@ -2,7 +2,7 @@ import { generateToken } from "../utilities/generateToken.js";
 import User from "../models/User.js"
 import { OAuth2Client } from "google-auth-library";
 import { sendAuthResponse } from "../utilities/sendAuthResponse.js";
-import { sendErrorResponse } from "../utilities/sendErrorResponse.js";
+import {sendErrorResponse} from "../utilities/sendErrorResponse.js";
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -43,7 +43,6 @@ export const register = async (req,res,next) =>
 
   if(!userName || !email || !password)
   {
-    return res.status(400).json({message:"please fill all fields"});
     sendErrorResponse(res,400,"please fill all fields");
   }
 
