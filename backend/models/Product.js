@@ -86,6 +86,7 @@ const productSchema = new mongoose.Schema({
 
 productSchema.pre("save", async function(next){
  this.status = this.quantity>0?"available":"out_of_stock"
+ next();
 })
 
 

@@ -39,7 +39,7 @@ categorySchema.pre("save",async function(next){
     {
         this.slug=this.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
     }
-    next
+    next()
 })
 
 const Category = mongoose.model("Category",categorySchema);

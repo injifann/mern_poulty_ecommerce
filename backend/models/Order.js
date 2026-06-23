@@ -73,7 +73,7 @@ orderSchema.pre("save",async function(next){
         this.orderNumber="ORD-" + Math.floor(Math.random()*1000);
      }
      this.calculate();
-     next;
+     next();
 })
 orderSchema.methods.calculate = function (){
     this.totalAmount=this.items.reduce((sum,item)=>sum+item.priceAtTimeOfOrder *item.quantity,0);
