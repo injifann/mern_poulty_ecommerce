@@ -8,6 +8,9 @@ export const getAllProducts = async(req,res)=>
     {
         try
         {
+         const {category,search } = req.query;
+         let query = {};
+         if(category){query.category = category; } 
          const products = await Product.find().sort({createdAt:-1});
          return res.status(200).json({message:"successfull",products});
         }
