@@ -1,15 +1,16 @@
 import mongoose from "mongoose";
 import Product from "../models/Product";
+import AppError from "./CustomError";
 
 export const getValidProduct = async(productId,isretun)=>
 {
  if(!productId)
   {
-   throw new AppError ("please Enter product id",404)
+   throw new AppError ("please Enter product id",400)
  }
  if(!mongoose.Types.ObjectId.isValid(productId))
   {
-    throw new AppError ("invalid product id",404)
+    throw new AppError ("invalid product id",400)
 
  }
   if(isretun)
