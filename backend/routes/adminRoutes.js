@@ -1,12 +1,14 @@
 
 import express from 'express';
-import { admin } from '../middleware/protect.js';
+import { admin,protect } from '../middleware/protect.js';
 import { addProduct,updateProduct, deleteProduct } from '../controllers/adminController.js';
+import upload from '../middleware/uploadMiddleware.js';
+
 
 const router = new express.Router();
 
-router.post("/addproduct",admin,upload.single("image"),addProduct);
-router.post("/updateproduct",admin,upload.single("image"),updateProduct);
-router.post("/deleteproduct",admin,deleteProduct);
+router.post("/addproduct",protect, admin,upload.single("image"),addProduct);
+router.post("/updateproduct",protect,admin,upload.single("image"),updateProduct);
+router.post("/deleteproduct",protect,admin,deleteProduct);
 
 export default router
