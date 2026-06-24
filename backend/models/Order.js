@@ -81,3 +81,4 @@ orderSchema.methods.calculate = function (){
 }
 
 const Order = mongoose.model("Order",orderSchema);
+export default Order;

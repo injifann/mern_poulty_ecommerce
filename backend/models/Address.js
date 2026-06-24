@@ -17,13 +17,14 @@ const addressSchema = new mongoose.Schema({
     ,
     addressLine1:{
         type:String,
-        trim:true
-
+        trim:true,
+        required:true,
     },
     addressLine2:
     {
         type:String,
-        trim:true
+        trim:true,
+        required:true,
     },
     city: 
     {
@@ -59,3 +60,4 @@ const addressSchema = new mongoose.Schema({
 },{timestamps:true});
 
 const Address = mongoose.model("Address",addressSchema);
+export default Address
