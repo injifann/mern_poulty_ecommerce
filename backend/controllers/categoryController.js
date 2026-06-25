@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 import Category from '../models/Category.js';
 import { sendErrorResponse } from '../utilities/sendErrorResponse.js';
 import Product from '../models/Product.js';
-import { isValidObjectId } from '../utilities/isValidObjectId.js';
+import  {isValidObjectId}  from '../utilities/isValidObjectId.js';
 
 
 export const getCategoryById = async(req,res,next)=>
