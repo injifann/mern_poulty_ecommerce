@@ -1,5 +1,6 @@
-import Product from "../models/Product"
-import Review from "../models/Review"
+import Product from "../models/Product.js"
+import Review from "../models/Review.js"
+import AppError from "./CustomError.js";
 
 export const updateProductRating = async (productId)=>
 {
@@ -19,7 +20,7 @@ export const updateProductRating = async (productId)=>
   }
   catch(error)
   {
-    throw error;
+    throw new AppError(error.message);
 
   }
 }
