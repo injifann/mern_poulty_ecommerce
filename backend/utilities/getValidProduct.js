@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import Product from "../models/Product";
-import AppError from "./CustomError";
+import Product from "../models/Product.js";
+import AppError from "./CustomError.js";
 
 export const getValidProduct = async(productId,isretun)=>
 {
