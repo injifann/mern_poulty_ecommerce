@@ -1,13 +1,19 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 import { Link } from 'react-router';
 
 export default function Login() {
-  const { login, googleAuth, isLoading } = useAuth();
+  const { login, googleAuth, isLoading,error } = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
 
+  useEffect(()=>{
+    if(error)
+    {
+        toast.error(error);
+    }
+  },[error])
   const handleSubmission = (e) => {
     e.preventDefault();
 
@@ -19,6 +25,7 @@ export default function Login() {
     }
 
     login(formData);
+  
   };
 
   return (
