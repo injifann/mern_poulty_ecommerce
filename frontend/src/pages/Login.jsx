@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
+import { Link } from 'react-router';
 
 export default function Login() {
   const { login, googleAuth, isLoading } = useAuth();
