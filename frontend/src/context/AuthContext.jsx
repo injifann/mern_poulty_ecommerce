@@ -100,8 +100,30 @@ export const AuthProvider = ({children})=>
    navigate("/");
  }
 
+ const googleAuth = async (credentialResponse) =>
+ {
+    try
+    {
+      setIsLoading(true);
+      setError("");
+      const res = await axios.post(`${api}/api/user/googleauth`,{token:credentialResponse.credential});
+      localStorage.setItem("token",res.data.token);
+      setUser(res.data.user);
+      navigate("/");
+
+    }
+    catch(error)
+    {
+      setError(error.response?.data?.message || "google authentication failed");
+    }
+    finally
+    {
+       setIsLoading(false);
+    }
+ }
+
  return (
-    <UserContext.Provider value={{user,isLoading,error,login,register,logout}}>
+    <UserContext.Provider value={{user,isLoading,error,login,register,logout,googleAuth}}>
      {children}
     </UserContext.Provider>
  )
