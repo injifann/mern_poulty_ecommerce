@@ -1,12 +1,19 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router';
 import {GoogleLogin} from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 export default function Register() {
-    const {register,googleAuth,isLoading} = useAuth();
+    const {register,googleAuth,isLoading,error} = useAuth();
     const [formData,setFormData] = useState({userName:'',email:'',password:''});
+
+    useEffect(()=>{
+      if(error)
+      {
+        toast.error(error);
+      }
+    },[error])
 
     const handleSubmission = (e) =>
     {
