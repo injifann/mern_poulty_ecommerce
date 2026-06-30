@@ -22,7 +22,7 @@ export const googleAuth = async (req,res,next)=>
     {
       user = await User.create({userName:name || email.split("@")[0],email:email,googleId:sub});
       const Apptoken = generateToken(user._id);
-      return res.status(201).json({message:"user successfully created",User:{_id:user._id,email:user.email},token:Apptoken});
+      return sendAuthResponse(201,"user successfully created",user);
     }
         if(!user.googleId)
         { user.googleId=sub;
@@ -54,6 +54,7 @@ export const register = async (req,res,next) =>
        return sendErrorResponse(res,400,"this email is already registered. please login with your credentials");
     }
     const user = await User.create({userName,email,password});
+    const appToken = generateToken(user._id);
     return sendAuthResponse(res,201,"account successfully created",user);
   }
   catch(error)
