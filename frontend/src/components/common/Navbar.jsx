@@ -1,7 +1,14 @@
 import React from "react";
 import { Link } from "react-router";
 
-export default function Navbar({ isLoggedIn }) {
+export default function Navbar({ user,setUser, }) {
+
+  const handleLogout = ()=>
+  {
+    localStorage.removeItem("token");
+    setUser(null);
+  }
+
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -39,7 +46,7 @@ export default function Navbar({ isLoggedIn }) {
           </li>
 
           {/* AUTH SECTION */}
-          {isLoggedIn ? (
+          {user ? (
             <>
               <li>
                 <Link to="/profile" className="hover:text-green-600">
@@ -48,7 +55,7 @@ export default function Navbar({ isLoggedIn }) {
               </li>
 
               <li>
-                <button
+                <button onClick={handleLogout}
                   className="text-red-500 hover:text-red-700"
                 >
                   Logout

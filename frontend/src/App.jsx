@@ -10,7 +10,6 @@ import axios from 'axios'
 
 export default function App() {
 
-  console.log(api);
   const [user,setUser] = useState(null);
   const [isLoadingUser,setIsloadingUser] = useState(true);
   const [isLoadingProduct,setIsloadingProduct] = useState(true);
@@ -74,7 +73,7 @@ export default function App() {
   }
   return (
     <>
-      <Navbar isLoggedIn={true}>
+      <Navbar user={user} setUser={setUser}>
       </Navbar> 
 
       <Routes>
