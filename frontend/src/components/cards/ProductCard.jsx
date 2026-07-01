@@ -5,17 +5,25 @@ import { Rating } from "../common/Rating";
 import {useCart} from '../../context/CartContext'
 
 export default function ProductCard({ product }) {
-  const { addToCart, cartError } = useCart();
+  const { addToCart} = useCart();
   const [quantity, setQuantity] = useState(1);
 
   const controlQuantity = (increment) => {
     if (quantity + increment < 1) return;
     setQuantity(quantity + increment);
   };
-
-  useEffect(() => {
-    if (cartError) toast.error(cartError);
-  }, [cartError]);
+  const handleAddToCart = async(product,quantity) => {
+    
+       const res = await addToCart(product,quantity);
+       if(res.success)
+       {
+        toast.success(res.message);
+       }
+       else 
+       {
+        toast.error(res.message);
+       }
+  }
 
   return (
     <div className="group overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
@@ -93,7 +101,7 @@ export default function ProductCard({ product }) {
 
         {/* Add to Cart */}
         <button
-          onClick={() => addToCart(product, quantity)}
+          onClick={() => handleAddToCart(product,quantity)}
           className="rounded-lg bg-indigo-600 px-5 py-2 font-medium text-white transition hover:bg-indigo-700 active:scale-95"
         >
           Add to Cart

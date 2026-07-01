@@ -8,7 +8,6 @@ const api = import.meta.env.VITE_API_URL;
 export const CartProvider = ({children})=>
 {
     const [cart,setCart] = useState(null);
-    const [cartError,setCartError] = useState('');
     const [cartLoading,setCartLoading] = useState(false);
     const {user} = useAuth();
 
@@ -42,13 +41,14 @@ export const CartProvider = ({children})=>
           try
           {
             setCartLoading(true);
-            setCartError('');
             const res = await axios.post(`${api}/api/cart/addtocart`,{productId:product._id,quantity:quantity});
             setCart(res.data.cart);
+            return {success:true,message:"Product added to cart successfully"}
+
           }
           catch(error)
           {
-            setCartError(error.response?.data?.message || "Failed to add product to cart");
+            return {success:false,message:error.response?.data?.message || "failed to add product to cart"}
           }
           finally
           {
@@ -66,12 +66,14 @@ export const CartProvider = ({children})=>
                 localCart.items[existingProductIndex].quantity += quantity;
                 updateCartTool(localCart);
                 saveCart(localCart);
+                return {success:true,message:"Product added to cart successfully"}
              }
              else
              {
                 localCart.items.push({product:product,quantity:quantity,priceAtTimeOfOrder:product.price});
                 updateCartTool(localCart);
                 saveCart(localCart);
+                return {success:true,message:"Product added to cart successfully"}
              }
             }
             else
@@ -79,6 +81,7 @@ export const CartProvider = ({children})=>
                 localCart.items.push({product:product,quantity:quantity,priceAtTimeOfOrder:product.price});
                 updateCartTool(localCart);
                 saveCart(localCart);
+                return {success:true,message:"Product added to cart successfully"}
             }
         }
     }
@@ -89,14 +92,14 @@ export const CartProvider = ({children})=>
         {
             try 
             {
-             setCartError("");
              setCartLoading(true)
              const res = await axios.delete(`${api}/api/cart/removefromcart`,{data:{productId,}});
              setCart(res.data.cart);
+             return {success:true,message:"Product removed from cart successfully"}
             }
             catch(error)
             {
-              setCartError(error.response?.data?.message || "failed to remove product from cart");
+              return {success:false,message:error.response?.data?.message || "failed to remove product from cart"};
             }
             finally
             {
@@ -110,6 +113,7 @@ export const CartProvider = ({children})=>
          localCart.items = localCart.items.filter((item)=>item.product._id !==productId);
          updateCartTool(localCart);
          saveCart(localCart);
+         return {success:true,message:"Product removed from cart successfully"}
         }
     }
 
@@ -120,13 +124,13 @@ export const CartProvider = ({children})=>
             try
             {
                 setCartLoading(true);
-                setCartError('');
                 await axios.delete(`${api}/api/cart/deletecart`);
                 setCart(null);
+                return {success:true,message:"Cart deleted successfully"}
             }
             catch(error)
             {
-                setCartError(error.response?.data?.message || "failed to delete cart")
+                return {success:false,message:error.response?.data?.message || "failed to delete cart"}
             }
             finally
             {
@@ -135,6 +139,7 @@ export const CartProvider = ({children})=>
         }
         localStorage.removeItem("cart");
         setCart(null);
+        return {success:true,message:"Cart deleted successfully"}
 
     }
 
@@ -144,14 +149,14 @@ export const CartProvider = ({children})=>
         {
             try
             {
-                setCartError("");
                 setCartLoading(true);
                 const res = await axios.put(`${api}/api/cart/updatecartquantity`,{productId:productId,quantity:quantity});
                 setCart(res.data.cart);
+                return {success:true,message:"Cart quantity updated successfully"}
             }
             catch(error)
             {
-             setCartError(error.response?.data?.message || "failed to update cart quantity");
+                return {success:false,message:error.response?.data?.message || "failed to update cart quantity"}
             }
             finally
             {
@@ -165,10 +170,11 @@ export const CartProvider = ({children})=>
             localCart.items[productIndex].quantity=quantity;
             updateCartTool(localCart);
             saveCart(localCart);
+            return {success:true,message:"Cart quantity updated successfully"}
         }
     }
     return (
-        <cartContext.Provider value ={{cart,updateCartQuantity,removeFromCart,addToCart,cartError,cartLoading,deleteCart}}>
+        <cartContext.Provider value ={{cart,updateCartQuantity,removeFromCart,addToCart,cartLoading,deleteCart}}>
             {children}
         </cartContext.Provider>
     )
