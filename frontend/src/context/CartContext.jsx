@@ -1,6 +1,6 @@
 import {useState,useContext,createContext, useEffect} from 'react';
 import { useAuth } from './AuthContext';
-import axios from 'axios';
+import axios from '../api/axios'
 
 const cartContext = createContext();
 const api = import.meta.env.VITE_API_URL;
