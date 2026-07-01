@@ -5,8 +5,7 @@ import { getAllProducts,rateProduct,getProductByCategory,getProductById } from '
 const router = new express.Router();
 
 router.get("/getallproducts",getAllProducts);
-router.get("/rateproduct",rateProduct);
-router.get("/rateproduct",rateProduct);
+router.post("/rateproduct",rateProduct);
 router.get("/category/:id",getProductByCategory);
 router.get("/product/:id",getProductById)
 
