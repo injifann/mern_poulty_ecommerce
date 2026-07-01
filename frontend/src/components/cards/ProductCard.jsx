@@ -5,19 +5,20 @@ import { Rating } from "../common/Rating";
 import {useCart} from '../../context/CartContext'
 
 export default function ProductCard({ product }) {
-  const { addToCart} = useCart();
+  const { addToCart,cartLoading} = useCart();
   const [quantity, setQuantity] = useState(1);
 
   const controlQuantity = (increment) => {
     if (quantity + increment < 1) return;
     setQuantity(quantity + increment);
   };
-  const handleAddToCart = async(product,quantity) => {
+  const handleAddToCart = async(quantity) => {
     
        const res = await addToCart(product,quantity);
        if(res.success)
        {
         toast.success(res.message);
+        setQuantity(1);
        }
        else 
        {
@@ -101,7 +102,7 @@ export default function ProductCard({ product }) {
 
         {/* Add to Cart */}
         <button
-          onClick={() => handleAddToCart(product,quantity)}
+          onClick={() => handleAddToCart(quantity)} disabled={cartLoading}
           className="rounded-lg bg-indigo-600 px-5 py-2 font-medium text-white transition hover:bg-indigo-700 active:scale-95"
         >
           Add to Cart
