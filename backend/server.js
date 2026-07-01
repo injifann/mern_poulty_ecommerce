@@ -15,7 +15,7 @@ app.use(cors());
 app.use("/uploads", express.static("uploads"));
 app.use("/api/user",userRouter);
 app.use("/api/admin",adminRoutes);
-app.use("/api/product/",productRoute);
+app.use("/api/products/",productRoute);
 app.use(errorHandler);
 
 connectDB();
