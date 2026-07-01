@@ -1,4 +1,4 @@
-import {useState,useContext,createContext} from 'react';
+import {useState,useContext,createContext, useEffect} from 'react';
 import { useAuth } from './AuthContext';
 import axios from 'axios';
 
@@ -12,14 +12,27 @@ export const CartProvider = ({children})=>
     const [cartLoading,setCartLoading] = useState(false);
     const {user} = useAuth();
 
+    useEffect(()=>{
+        if(!user)
+        {
+            let localCart = JSON.parse(localStorage.getItem("cart"))
+            if(localCart)
+            {
+                setCart(localCart);
+            }
+        }
+    },[user]);
+    
+
     const saveCart =(Cart)=>
     {
       localStorage.setItem("cart",JSON.stringify(Cart))
       setCart(Cart);
     }
-    const getTotalAmount = (items) =>
+    const updateCartTool = (Cart) =>
     {
-       return items.reduce((sum,item)=>sum + (item.priceAtTimeOfOrder * item.quantity),0);
+      Cart.totalAmount = Cart.items.reduce((sum,item)=>sum + (item.priceAtTimeOfOrder * item.quantity),0);
+      Cart.totalItems = Cart.items.reduce((sum,item)=>sum + item.quantity,0);
     }
 
     const addToCart = async (product,quantity)=>
@@ -45,30 +58,26 @@ export const CartProvider = ({children})=>
         else
         {
             const localCart = JSON.parse(localStorage.getItem('cart')) || {items:[],totalAmount:0,totalItems:0};
-            if(localCart)
+            if(localCart.items.length > 0)
             {
-             const existingProductIndex = localCart.items.findIndex((item)=>item.product._id.toString()===product._id.toString());
+             const existingProductIndex = localCart.items.findIndex((item)=>item.product._id===product._id);
              if(existingProductIndex !== -1)
              {
                 localCart.items[existingProductIndex].quantity += quantity;
-                localCart.totalAmount = getTotalAmount(localCart.items);
+                updateCartTool(localCart);
                 saveCart(localCart);
              }
              else
              {
-                let totalAmount = getTotalAmount(localCart.items);
                 localCart.items.push({product:product,quantity:quantity,priceAtTimeOfOrder:product.price});
-                localCart.totalAmount = totalAmount;
-                localCart.totalItems = localCart.items.length;
+                updateCartTool(localCart);
                 saveCart(localCart);
-
              }
             }
             else
             {
                 localCart.items.push({product:product,quantity:quantity,priceAtTimeOfOrder:product.price});
-                localCart.totalAmount = product.price;
-                localCart.totalAmount = 1;
+                updateCartTool(localCart);
                 saveCart(localCart);
             }
         }
@@ -82,7 +91,7 @@ export const CartProvider = ({children})=>
             {
              setCartError("");
              setCartLoading(true)
-             const res = await axios.delete(`${api}/api/cart/removefromcart`,{productId:productId});
+             const res = await axios.delete(`${api}/api/cart/removefromcart`,{data:{productId,}});
              setCart(res.data.cart);
             }
             catch(error)
@@ -91,14 +100,15 @@ export const CartProvider = ({children})=>
             }
             finally
             {
-               setCartLoading(true)
+               setCartLoading(false)
             }
             
         }
         else
         {
          const localCart = JSON.parse(localStorage.getItem('cart'));
-         localCart.items = localCart.items.filter((item)=>item.product._id.toString() !==productId.toString());
+         localCart.items = localCart.items.filter((item)=>item.product._id !==productId);
+         updateCartTool(localCart);
          saveCart(localCart);
         }
     }
@@ -151,15 +161,16 @@ export const CartProvider = ({children})=>
         else
         {
             let localCart = JSON.parse(localStorage.getItem('cart'));
-            const productIndex = localCart.items.findIndex((item)=>item.product._id.toString()===productId.toString());
+            const productIndex = localCart.items.findIndex((item)=>item.product._id===productId);
             localCart.items[productIndex].quantity=quantity;
+            updateCartTool(localCart);
             saveCart(localCart);
         }
     }
     return (
-        <cartContext.provider value ={{cart,updateCartQuantity,removeFromCart,addToCart,cartError,cartLoading,deleteCart}}>
+        <cartContext.Provider value ={{cart,updateCartQuantity,removeFromCart,addToCart,cartError,cartLoading,deleteCart}}>
             {children}
-        </cartContext.provider>
+        </cartContext.Provider>
     )
 }
 

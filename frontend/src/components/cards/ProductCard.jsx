@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useCart } from "../context/cartContext";
 import { Link } from "react-router";
 import toast from "react-hot-toast";
 import { Rating } from "../common/Rating";
+import {useCart} from '../../context/CartContext'
 
 export default function ProductCard({ product }) {
   const { addToCart, cartError } = useCart();
@@ -23,7 +23,7 @@ export default function ProductCard({ product }) {
         {/* Product Image */}
         <div className="overflow-hidden bg-gray-100">
           <img
-            src={product.images[0]}
+            src={product.images[0].url}
             alt={product.title}
             className="h-64 w-full object-cover transition-transform duration-300 group-hover:scale-105"
           />
