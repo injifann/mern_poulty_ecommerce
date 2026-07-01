@@ -102,7 +102,7 @@ export default function ProductCard({ product }) {
 
         {/* Add to Cart */}
         <button
-          onClick={() => handleAddToCart(quantity)} disabled={cartLoading}
+          onClick={() => handleAddToCart(quantity)} disabled={cartLoading || product.status === "out_of_stock"}
           className="rounded-lg bg-indigo-600 px-5 py-2 font-medium text-white transition hover:bg-indigo-700 active:scale-95"
         >
           Add to Cart
