@@ -82,7 +82,7 @@ export const getAllProducts = async(req,res)=>
    }
    try
    {
-     const product = await getValidProduct(req.params.id);
+     const product = await getValidProduct(req.params.id,true);
      const reviewExist = await Review.findOne({user:req.user._id,product:product._id,});
      
      if(reviewExist) 
