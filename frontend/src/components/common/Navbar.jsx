@@ -1,14 +1,9 @@
 import React from "react";
 import { Link } from "react-router";
+import { useAuth } from "../../context/AuthContext";
 
-export default function Navbar({ user,setUser, }) {
-
-  const handleLogout = ()=>
-  {
-    localStorage.removeItem("token");
-    setUser(null);
-  }
-
+export default function Navbar() {
+  const {user,logout} = useAuth();
   return (
     <nav className="bg-white shadow-md sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
@@ -55,7 +50,7 @@ export default function Navbar({ user,setUser, }) {
               </li>
 
               <li>
-                <button onClick={handleLogout}
+                <button onClick={logout}
                   className="text-red-500 hover:text-red-700"
                 >
                   Logout
