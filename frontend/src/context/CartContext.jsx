@@ -1,6 +1,7 @@
 import {useState,useContext,createContext, useEffect} from 'react';
 import { useAuth } from './AuthContext';
 import axios from '../api/axios'
+import { useDebugValue } from 'react';
 
 const cartContext = createContext();
 const api = import.meta.env.VITE_API_URL;
@@ -12,6 +13,8 @@ export const CartProvider = ({children})=>
     const {user} = useAuth();
 
     useEffect(()=>{
+        const fetchCarts = async () =>
+        {
         if(!user)
         {
             let localCart = JSON.parse(localStorage.getItem("cart"))
@@ -20,21 +23,40 @@ export const CartProvider = ({children})=>
                 setCart(localCart);
             }
         }
+        else
+        {
+          try
+          {
+           setCartLoading(true);
+           const res = await axios.post(`${api}/api/cart/getmycart`);
+           setCart(res.data.cart);
+          }
+          catch(error)
+          {
+            return {success:false,message:error.response?.data?.message || "failed to fetch your cart"}
+          }
+          finally
+          {
+           setCartLoading(false)
+          }
+        }
+    };fetchCarts();
     },[user]);
     
 
     const saveCart =(Cart)=>
     {
       localStorage.setItem("cart",JSON.stringify(Cart))
-      setCart(Cart);
+      setCart({...Cart});
     }
     const updateCartTool = (Cart) =>
     {
-      Cart.totalAmount = Cart.items.reduce((sum,item)=>sum + (item.priceAtTimeOfOrder * item.quantity),0);
-      Cart.totalItems = Cart.items.reduce((sum,item)=>sum + item.quantity,0);
+        Cart.items = Cart.items??[];
+    return {...Cart,items,totalAmount:Cart.items.reduce((sum,item)=>sum + (item.priceAtTimeOfOrder * item.quantity),0),totalItems:Cart.items.reduce((sum,item)=>sum + item.quantity,0)}
     }
 
     const addToCart = async (product,quantity)=>
+
     {
         if(user)
         {
@@ -57,30 +79,30 @@ export const CartProvider = ({children})=>
         }
         else
         {
-            const localCart = JSON.parse(localStorage.getItem('cart')) || {items:[],totalAmount:0,totalItems:0};
+            let localCart = JSON.parse(localStorage.getItem('cart')) || {items:[],totalAmount:0,totalItems:0};
             if(localCart.items.length > 0)
             {
              const existingProductIndex = localCart.items.findIndex((item)=>item.product._id===product._id);
              if(existingProductIndex !== -1)
              {
                 localCart.items[existingProductIndex].quantity += quantity;
-                updateCartTool(localCart);
-                saveCart(localCart);
+                const updated = updateCartTool(localCart);
+                saveCart(updated);
                 return {success:true,message:"Product added to cart successfully"}
              }
              else
              {
                 localCart.items.push({product:product,quantity:quantity,priceAtTimeOfOrder:product.price});
-                updateCartTool(localCart);
-                saveCart(localCart);
+                const updated = updateCartTool(localCart);
+                saveCart(updated);
                 return {success:true,message:"Product added to cart successfully"}
              }
             }
             else
             {
                 localCart.items.push({product:product,quantity:quantity,priceAtTimeOfOrder:product.price});
-                updateCartTool(localCart);
-                saveCart(localCart);
+                const updated = updateCartTool(localCart);
+                saveCart(updated);
                 return {success:true,message:"Product added to cart successfully"}
             }
         }
@@ -109,10 +131,15 @@ export const CartProvider = ({children})=>
         }
         else
         {
-         const localCart = JSON.parse(localStorage.getItem('cart'));
+
+         let localCart = JSON.parse(localStorage.getItem('cart'))|| {items:[],totalAmount:0,totalItems:0};
+         if(localCart.items.length===0)
+         {
+            return {success:false,message:"cart does not found"}
+         }
          localCart.items = localCart.items.filter((item)=>item.product._id !==productId);
-         updateCartTool(localCart);
-         saveCart(localCart);
+         const updated = updateCartTool(localCart);
+         saveCart(updated);
          return {success:true,message:"Product removed from cart successfully"}
         }
     }
@@ -140,7 +167,6 @@ export const CartProvider = ({children})=>
         localStorage.removeItem("cart");
         setCart(null);
         return {success:true,message:"Cart deleted successfully"}
-
     }
 
     const updateCartQuantity = async (productId,quantity)=>
@@ -165,16 +191,74 @@ export const CartProvider = ({children})=>
         }
         else
         {
-            let localCart = JSON.parse(localStorage.getItem('cart'));
+            let localCart = JSON.parse(localStorage.getItem('cart'))|| {items:[],totalAmount:0,totalItems:0};
+            if(localCart.items.length===0)
+            {
+                return {success:false,message:"Cart does not found"};
+            }
             const productIndex = localCart.items.findIndex((item)=>item.product._id===productId);
+            if(productIndex === -1)
+            {
+                return {success:false,message:"product not found in cart"}
+            }
             localCart.items[productIndex].quantity=quantity;
-            updateCartTool(localCart);
-            saveCart(localCart);
+            const updated = updateCartTool(localCart);
+            saveCart(updated);
             return {success:true,message:"Cart quantity updated successfully"}
         }
     }
+    const updateCart = async (updatedItems) =>
+    {
+
+        if(user)
+        {
+          if(!Array.isArray(updatedItems) || updatedItems.length === 0)
+          {
+            return {success:false,message:"please update first"}
+          }
+          try
+          {
+          setCartLoading(true);
+          const res = await axios.put(`${api}/api/cart/updateCart`,{updatedItems});
+          setCart(res.data.cart);
+          return {success:true,message:"Cart updated successfully"}
+         }
+         catch(error)
+         {
+            return {success:false,message:error.response?.data?.message || "failed to update cart"}
+         }
+         finally
+         {
+            setCartLoading(false);
+         }
+
+        }
+    else
+    {
+        let localCart = JSON.parse(localStorage.getItem('cart'))|| {items:[],totalAmount:0,totalItems:0};
+        if(localCart.items.length===0)
+         {
+           return {success:false,message:"cart not found"}
+          }
+
+        const updates = new Map (updatedItems.map((item)=>[
+            item.productId.toString(),
+            item.quantity,]))
+         for (const item of localCart.items)
+         {
+            const quantity = updates.get(item.product._id.toString());
+            if(quantity !== undefined)
+            {
+                item.quantity = quantity;
+            }
+         }
+         const updated = updateCartTool(localCart);
+         saveCart(updated);
+         return {success:true,message:"Cart updated successfully"}
+    }
+}
     return (
-        <cartContext.Provider value ={{cart,updateCartQuantity,removeFromCart,addToCart,cartLoading,deleteCart}}>
+        <cartContext.Provider value ={{cart,updateCartQuantity,updateCart,removeFromCart,addToCart,cartLoading,deleteCart}}>
             {children}
         </cartContext.Provider>
     )
