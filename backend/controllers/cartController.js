@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { isValidObjectId } from "mongoose";
 import Cart from "../models/Cart.js";
 import Product from "../models/Product.js";
 import { validateQuantity } from "../utilities/validateQuantity.js";
@@ -6,6 +6,87 @@ import { getValidProduct } from "../utilities/getValidProduct.js";
 import { findCart } from "../utilities/findCart.js";
 import { sendErrorResponse } from "../utilities/sendErrorResponse.js";
 import { sendCartResponse } from "../utilities/sendCartResponse.js";
+
+
+export const getMyCart = async (req,res,next)=>
+{
+  try
+  {
+    let cart = await findCart(req.user._id,true);
+    if(!cart)
+    {
+      return sendErrorResponse(res,404,"cart not found");
+    }
+    
+    await cart.populate("items.product","title");
+    return sendCartResponse(res,200,"cart successfully fetched",cart);
+
+  }
+  catch(error)
+  {
+    next(error)
+  }
+}
+
+export const updateCart = async (req,res,next) =>
+{
+  const {updatedItems} = req.body;
+  if(!Array.isArray(updatedItems) || updatedItems.length===0)
+  {
+    return sendErrorResponse(res,400,"please update products first");
+  }
+
+  for (const item of updatedItems)
+  {
+    if(typeof item.quantity !== "number" || item.quantity<1 || !item.productId || !isValidObjectId(item.productId) )
+    {
+      return sendErrorResponse(res,400,"invalid product or quantity");
+    }
+  }
+
+  try
+  {
+    let cart = await findCart(req.user._id,true);
+    if(!cart)
+    {
+      return sendErrorResponse(res,404,"cart not found");
+    }
+
+    for (const Item of updatedItems)
+    {
+        const cartItem = cart.items.find((item)=>
+        item.product._id.toString() === Item.productId.toString());
+        if(!cartItem)
+        {
+          return sendErrorResponse(res,404,`Product ${Item.productId} not found in cart`);
+
+        }
+    }
+
+
+     const updates = new Map(updatedItems.map((item)=>[
+      item.productId.toString(),
+      item.quantity,
+     ]))
+
+     for (const item of cart.items)
+      {
+       const quantity = updates.get(item.product._id.toString());
+       if(quantity !== undefined)
+       {
+        item.quantity = quantity;
+       }
+      }
+
+    await cart.save();
+    return sendCartResponse(res,200,"successfully updated cart",cart);
+    
+  }
+  catch(error)
+  {
+    next(error);
+  }
+}
 
 export const addToCart = async (req,res,next) =>
 {
@@ -71,8 +152,8 @@ export const RemoveProductFromCart = async (req,res,next)=>
   {
       next(error)
   }
-
 }
+
 export const updateCartQuantity = async (req,res,next)=>
 {
     const {productId,quantity} = req.body;
@@ -84,7 +165,7 @@ export const updateCartQuantity = async (req,res,next)=>
 
        let cart = await findCart(req.user._id,false);
 
-       const itemIndex = cart.items.findIndex(item=>item.product.toString()===productId.toString());
+       const itemIndex = cart.items.findIndex(item=>item.product.toString() === productId.toString());
 
        if(itemIndex === -1){ return sendErrorResponse(res,404,"product does not found in a cart")};
        if(product.quantity < validQuantity)
