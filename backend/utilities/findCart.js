@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import Cart from "../models/Cart";
-import AppError from "./CustomError";
+import Cart from "../models/Cart.js";
+import AppError from "./CustomError.js";
 
 export const findCart = async (userId,isReturn)=>
 {
