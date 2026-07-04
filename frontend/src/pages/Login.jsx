@@ -5,15 +5,9 @@ import toast from 'react-hot-toast';
 import { Link } from 'react-router';
 
 export default function Login() {
-  const { login, googleAuth, isLoading,error } = useAuth();
+  const { login, googleAuth, isLoading} = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
 
-  useEffect(()=>{
-    if(error)
-    {
-        toast.error(error);
-    }
-  },[error])
   const handleSubmission = (e) => {
     e.preventDefault();
 

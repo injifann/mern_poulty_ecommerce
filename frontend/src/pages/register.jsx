@@ -5,15 +5,8 @@ import { useAuth } from '../context/AuthContext';
 import toast from 'react-hot-toast';
 
 export default function Register() {
-    const {register,googleAuth,isLoading,error} = useAuth();
+    const {register,googleAuth,isLoading} = useAuth();
     const [formData,setFormData] = useState({userName:'',email:'',password:''});
-
-    useEffect(()=>{
-      if(error)
-      {
-        toast.error(error);
-      }
-    },[error])
 
     const handleSubmission = (e) =>
     {
