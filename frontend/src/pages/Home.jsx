@@ -7,10 +7,10 @@ const api = import.meta.env.VITE_API_URL;
 
 export default function Home() {
   const [products, setProducts] = useState([]);
+  const [error,setError] = useState('')
   const [fetchingProducts, setIsFetchingProducts] = useState(false);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
+const fetchProducts = async () => {
       try {
         setIsFetchingProducts(true);
 
@@ -20,15 +20,16 @@ export default function Home() {
 
         console.log(res.data.products)
         setProducts(res.data.products);
-      } catch (error) {
-        toast.error(
-          error.response?.data?.message || "Failed to fetch products"
-        );
+      } catch (error)
+       {
+        setError(error.response?.data?.message || "failed to fetch featured products")
       } finally {
         setIsFetchingProducts(false);
       }
     };
 
+  useEffect(() => 
+  {
     fetchProducts();
   }, []);
 
@@ -92,7 +93,18 @@ export default function Home() {
         <p className="mt-2 text-gray-600">
           Handpicked fresh products available today
         </p>
+        {error && (
+          <div className="flex items-center justify-between gap-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
+            <p className="truncate">Failed to fetch featured products</p>
 
+            <button
+              onClick={fetchProducts}
+              className="shrink-0 rounded-md bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700 transition"
+            >
+              Retry
+            </button>
+          </div>
+        )}
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {products.slice(0, 6).map((product) => (
             <ProductCard
