@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useCart } from '../context/CartContext'
+import { useCart } from '../../context/CartContext'
 import toast from 'react-hot-toast';
 
 export default function Cart() {

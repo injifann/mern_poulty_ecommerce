@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { useCart } from '../context/CartContext'
-import ProductCard from '../components/cards/ProductCard'
+import { useCart } from '../../context/CartContext'
+import ProductCard from '../../components/cards/ProductCard'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 

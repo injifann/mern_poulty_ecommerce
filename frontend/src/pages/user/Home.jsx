@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import ProductCard from "../components/cards/ProductCard";
+import ProductCard from "../../components/cards/ProductCard";
 import toast from "react-hot-toast";
-import axios from '../api/axios'
+import axios from '../../api/axios'
 
 const api = import.meta.env.VITE_API_URL;
 

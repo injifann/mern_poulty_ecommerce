@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 
 import { useParams } from 'react-router'
-import { useCart } from '../context/CartContext';
-import axios from '../api/axios'
+import { useCart } from '../../context/CartContext';
+import axios from '../../api/axios'
 import toast from 'react-hot-toast';
-import { InputRating } from '../components/common/InputRating';
+import { InputRating } from '../../components/common/InputRating';
 import { useEffect } from 'react';
-import { Rating } from '../components/common/Rating';
+import { Rating } from '../../components/common/Rating';
 const api = import.meta.env.VITE_API_URL;
 
 export default function ProductDetails() {
