@@ -51,7 +51,7 @@ export const CartProvider = ({children})=>
     }
     const updateCartTool = (Cart) =>
     {
-        Cart.items = Cart.items??[];
+    const items = Cart.items??[];
     return {...Cart,items,totalAmount:Cart.items.reduce((sum,item)=>sum + (item.priceAtTimeOfOrder * item.quantity),0),totalItems:Cart.items.reduce((sum,item)=>sum + item.quantity,0)}
     }
 
