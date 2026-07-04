@@ -3,13 +3,13 @@ import Navbar from './components/common/Navbar'
 import { Routes,Route, } from 'react-router'
 import { useState } from 'react'
 import toast from 'react-hot-toast';
-import Home from './pages/Home';
+import Home from './pages/user/Home';
 import Login from './pages/Login';
 import Register from './pages/register';
 import axios from 'axios'
-import ProductDetails from './pages/ProductDetails';
-import Cart from './pages/Cart';
-import Shop from './pages/Shop';
+import ProductDetails from './pages/user/ProductDetails';
+import Cart from './pages/user/Cart';
+import Shop from './pages/user/Shop';
 
   const api = import.meta.env.VITE_API_URL;
 
@@ -30,3 +30,4 @@ export default function App() {
   </>
   )
 }
+
