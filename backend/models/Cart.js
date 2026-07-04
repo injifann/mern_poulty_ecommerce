@@ -46,7 +46,7 @@ cartSchema.pre("save",async function(next){
     {
         this.calculateTotals();
     }
-    next();
+    next;
 })
 
 cartSchema.methods.calculateTotals=function()
