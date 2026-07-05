@@ -28,8 +28,7 @@ export const AuthProvider = ({children})=>
             }
             if(token)
             {
-                const res = await axios.get(`${api}/api/user/me`);
-                localStorage.setItem("token",res.data.token);
+                const res = await axios.get(`/api/user/me`);
                 setUser(res.data.user);
             }
 
@@ -53,14 +52,21 @@ export const AuthProvider = ({children})=>
         {
           setError("");
           setIsLoading(true)
-          const res = await axios.post(`${api}/api/user/login`,{email,password}) ;
+          const res = await axios.post(`/api/user/login`,{email,password}) ;
           localStorage.setItem("token",res.data.token);
           setUser(res.data.user);
-          navigate("/")
+          if(res.data.user.role === "admin")
+          {
+          navigate("/admin/dashboard")
+          }
+          else
+          {
+            navigate("/");
+          }
        }
        catch(error)
        {
-         setError(error.response?.data?.message || "Failed to Login");
+          return {success:false,message:error.response?.data?.message || "failed to login"}
        }
        finally 
        {
@@ -75,7 +81,7 @@ export const AuthProvider = ({children})=>
         { 
           setError("")
           setIsLoading(true);
-          const res = await axios.post(`${api}/api/user/register`,{userName,email,password});
+          const res = await axios.post(`/api/user/register`,{userName,email,password});
           localStorage.setItem("token",res.data.token);
           setUser(res.data.user)
           navigate("/");
@@ -105,7 +111,7 @@ export const AuthProvider = ({children})=>
     {
       setIsLoading(true);
       setError("");
-      const res = await axios.post(`${api}/api/user/googleauth`,{token:credentialResponse.credential});
+      const res = await axios.post(`/api/user/googleauth`,{token:credentialResponse.credential});
       localStorage.setItem("token",res.data.token);
       setUser(res.data.user);
       navigate("/");
