@@ -1,13 +1,15 @@
 import express from 'express';
-import { addCategory,deleteCategory,updateCategory,getAllCategory,getCategoryById } from '../controllers/categoryController';
-import { protect,admin } from '../middleware/protect';
+import { addCategory,deleteCategory,updateCategory,getAllCategory,getCategoryById } from '../controllers/categoryController.js';
+import { protect,admin } from '../middleware/protect.js';
 
-export const router = new express.Router();
+const router = new express.Router();
 router.post("/addcategory",protect,admin,addCategory);
 router.post("/deletecategory",protect,admin,deleteCategory);
 router.put("/updatecategory",protect,admin,updateCategory);
 router.get("/getallcategory",protect,admin,getAllCategory);
 router.get("/getcategorybyid/:id",protect,admin,getCategoryById);
+
+export default router
 
 
 
