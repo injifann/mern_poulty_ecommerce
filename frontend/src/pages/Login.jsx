@@ -8,7 +8,7 @@ export default function Login() {
   const { login, googleAuth, isLoading} = useAuth();
   const [formData, setFormData] = useState({ email: '', password: '' });
 
-  const handleSubmission = (e) => {
+  const handleSubmission = async (e) => {
     e.preventDefault();
 
     if (isLoading) return;
@@ -18,7 +18,11 @@ export default function Login() {
       return;
     }
 
-    login(formData);
+     const res = await login(formData);
+     if(res?.success === false)
+     {
+      toast.error(res?.message || "Failed to login");
+     }
   
   };
 
