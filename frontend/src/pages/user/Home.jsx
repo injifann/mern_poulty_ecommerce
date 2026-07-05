@@ -18,7 +18,6 @@ const fetchProducts = async () => {
           `${api}/api/products/getallproducts`
         );
 
-        console.log(res.data.products)
         setProducts(res.data.products);
       } catch (error)
        {
