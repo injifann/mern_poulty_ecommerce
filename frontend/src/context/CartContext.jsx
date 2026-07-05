@@ -4,7 +4,6 @@ import axios from '../api/axios'
 import { useDebugValue } from 'react';
 
 const cartContext = createContext();
-const api = import.meta.env.VITE_API_URL;
 
 export const CartProvider = ({children})=>
 {
@@ -23,12 +22,16 @@ export const CartProvider = ({children})=>
                 setCart(localCart);
             }
         }
+        else if(user.role === 'admin')
+        {
+            return
+        }
         else
         {
           try
           {
            setCartLoading(true);
-           const res = await axios.post(`${api}/api/cart/getmycart`);
+           const res = await axios.get(`/api/cart/getmycart`);
            setCart(res.data.cart);
           }
           catch(error)
@@ -63,7 +66,7 @@ export const CartProvider = ({children})=>
           try
           {
             setCartLoading(true);
-            const res = await axios.post(`${api}/api/cart/addtocart`,{productId:product._id,quantity:quantity});
+            const res = await axios.post(`/api/cart/addtocart`,{productId:product._id,quantity:quantity});
             setCart(res.data.cart);
             return {success:true,message:"Product added to cart successfully"}
 
@@ -115,7 +118,7 @@ export const CartProvider = ({children})=>
             try 
             {
              setCartLoading(true)
-             const res = await axios.delete(`${api}/api/cart/removefromcart`,{data:{productId,}});
+             const res = await axios.delete(`/api/cart/removefromcart`,{data:{productId,}});
              setCart(res.data.cart);
              return {success:true,message:"Product removed from cart successfully"}
             }
@@ -151,7 +154,7 @@ export const CartProvider = ({children})=>
             try
             {
                 setCartLoading(true);
-                await axios.delete(`${api}/api/cart/deletecart`);
+                await axios.delete(`/api/cart/deletecart`);
                 setCart(null);
                 return {success:true,message:"Cart deleted successfully"}
             }
@@ -176,7 +179,7 @@ export const CartProvider = ({children})=>
             try
             {
                 setCartLoading(true);
-                const res = await axios.put(`${api}/api/cart/updatecartquantity`,{productId:productId,quantity:quantity});
+                const res = await axios.put(`/api/cart/updatecartquantity`,{productId:productId,quantity:quantity});
                 setCart(res.data.cart);
                 return {success:true,message:"Cart quantity updated successfully"}
             }
@@ -219,7 +222,7 @@ export const CartProvider = ({children})=>
           try
           {
           setCartLoading(true);
-          const res = await axios.put(`${api}/api/cart/updateCart`,{updatedItems});
+          const res = await axios.put(`/api/cart/updateCart`,{updatedItems});
           setCart(res.data.cart);
           return {success:true,message:"Cart updated successfully"}
          }
