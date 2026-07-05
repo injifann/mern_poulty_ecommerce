@@ -3,7 +3,38 @@ import Product from "../models/Product.js";
 import { generateUniqueSKU } from "../utilities/generateUniqueSKU.js";
 import cloudinary from '../config/cloudinary.js';
 import { sendErrorResponse } from "../utilities/sendErrorResponse.js";
+import Category from "../models/Category.js";
+import User from "../models/User.js";
 
+export const getProducts = async(req,res,next)=>
+{
+    const page = Number(req.query.page)||1;
+    const limit = Number(req.query.limit)||10;
+    const skip = (page-1)*limit;
+    try
+    {
+     const products = await Product.find().skip(skip).limit(limit).populate("category","name");
+     return res.status(200).json({message:"successfull",products});
+    }
+    catch(error)
+    {
+        next(error);
+    }
+}
+export const getstats = async(req, res, next)=>
+{
+  try 
+  {
+    const totalProducts = await Product.countDocuments();
+    const totalCategories = await Category.countDocuments();
+    const totalUsers = await User.countDocuments();
+    res.status(200).json({message:"successfull",stats:{totalProducts,totalCategories,totalUsers}});
+  }
+  catch(error)
+  {
+    next(error);
+  }
+}
 export const addProduct = async (req , res,next)=>{
 
     const {title,description,price,quantity,category}=req.body;
