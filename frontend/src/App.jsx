@@ -10,15 +10,16 @@ import axios from 'axios'
 import ProductDetails from './pages/user/ProductDetails';
 import Cart from './pages/user/Cart';
 import Shop from './pages/user/Shop';
-
-  const api = import.meta.env.VITE_API_URL;
+import Dashboard from './pages/admin/Dashboard';
+import { useAuth } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
+import Profile from './pages/user/Profile';
 
 export default function App() {
+  
   return (
-    <>
-      <Navbar>
-      </Navbar> 
-
+<>
+      <Navbar/>
       <Routes>
         <Route path='/' element ={<Home/>}/>
         <Route path='/login' element ={<Login/>}/>
@@ -26,8 +27,9 @@ export default function App() {
         <Route path='/product/:id' element ={<ProductDetails/>}/>
         <Route path='/cart' element={<Cart/>}/>
         <Route path='/shop' element={<Shop/>}/>
+        <Route path='/profile' element = {<Profile/>}/>
+        <Route path='/admin/dashboard' element={<Dashboard/>}/>
       </Routes> 
-  </>
-  )
+</>
+)
 }
-
