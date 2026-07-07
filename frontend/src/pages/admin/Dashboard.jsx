@@ -1,108 +1,143 @@
-import axios from 'axios';
+import axios from '../../api/axios';
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
+import { Link } from 'react-router';
+import { useAuth } from '../../context/AuthContext';
 const api = import.meta.env.VITE_API_URL;
 
-export default function Dashboard()
- {
-   const [newCategoryData,setNewCategoryData] = useState('');
-   const [isFetchingCategory,setIsFetchingCategory] = useState(false);
-   const [categories,setCategory] = useState(null);
-   const [isCreatingCategory,setIsCreatingCategory] = useState(false);
 
-   const fetchCategory = async() =>
-   {
-    try
-    { isFetchingCategory(true);
-      const res = axios.get(`${api}/api/category/getallcategory`);
-      setCategory(res.data.category);
-    }
-    catch(error)
-    {
-     toast.error(error.response?.data?.message || "failed to Fetch category");
-    }
-    finally
-    {
-        isFetchingCategory(false);
-    }
-   }
-   useEffect(()=>{fetchCategory()},[])
+export default function Dashboard() {
+    const {isLoading} = useAuth()
+    const [stats,setStats] = useState(null);
+    const [isLoadingStats,setIsLoadingStats] = useState(true);
 
-   const handleCategoryData = (e) =>
-    {
-        setNewCategoryData((prev)=>({...newCategoryData,[e.target.name]:e.target.value}))
-    } 
 
-    const handleCategoryCreation = async (e) =>
+    const fetchStats = async ()=>
     {
-        e.preventDefault();
-        if(!newCategoryData.name)
+        if(isLoading)
         {
-            return toast.error("Category name cannot be empty");
+            return
         }
+        else
+        {
         try
         {
-         setIsCreatingCategory(true);
-         const res = await axios.post(`${api}/api/addcategory`,{
-            name:newCategoryData.name,
-            description:newCategoryData.description??'',
-            parent:newCategoryData.parent??''});
-            fetchCategory();
+            const res = await axios.get(`api/admin/getstats`);
+            setStats(res.data.stats);
         }
         catch(error)
         {
-            toast.error(error.response?.data?.message || "Failed to create category");
+         toast.error(error.response?.data?.message || "failed to load stats");
         }
         finally
         {
-         setIsCreatingCategory(false);
+            setIsLoadingStats(false)
         }
-    
     }
 
-    if(isFetchingCategory ) return (
-      
-    <div className="flex h-screen items-center justify-center text-lg font-medium text-gray-600">
-        fetching category....
-    </div>
+    }
 
-    )
+    useEffect(()=>{fetchStats()},[isLoading])
+    if(isLoading)
+         {
+        return (
+      <div className="flex h-screen items-center justify-center text-lg font-medium text-gray-600">
+        Loading admin dashboard
+      </div>
+        )
+    }
+        
+
+    if(isLoadingStats)
+    {
+        return (
+      <div className="flex h-screen items-center justify-center text-lg font-medium text-gray-600">
+        Loading admin dashboard~
+      </div>
+        )
+    }
+
   return (
-    <div>
-        <div>
-          <h1>Controll stock products</h1>
-          <button>Add product</button>
-          <button>Update product</button>
-          <button>Delete product</button>
-        </div>
-        <div>
-            <div>
-                <h1>Controll stock categories</h1>
-                <h2>existing category</h2>
-                {categories?.map((category)=>
-                <div key={category._id}>
-                <p>{category.name}</p>
-                <p>{category.description??''}</p>
-                <p>{category.parent.name??''}</p>
-                </div>
-                )}
+  <div className="min-h-screen bg-gray-50 p-6">
+    <div className="max-w-6xl mx-auto">
 
-            </div>
-            <div>
-                <h2>add category</h2>
-                <form onSubmit={handleCategoryCreation}>
-                    <label >Category Name</label>
-                    <input type="text" id='categoryName' name='categoryName' value={newCategoryData.categoryName} onChange={handleCategoryData}/>
-                    <label htmlFor="">Category Description(optional)</label>
-                    <input type="text" id='categorydescription' name ="categorydescription" value={newCategoryData.categorydescription??''} onChange={handleCategoryData}/>
-                    <label htmlFor="">Parent Category (optional)</label>
-                    <input type="text" id='parent' name='parent' value={newCategoryData.categoryParent??''} onChange={handleCategoryData}/>
-                    <button>Submitt</button>
-                </form>
-            </div>
+      {/* HEADER */}
+      <h1 className="text-2xl font-bold text-gray-800 mb-6">
+        Admin Dashboard
+      </h1>
 
+      {/* STATS CARDS */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <div className="bg-white shadow-sm rounded-xl p-6 border hover:shadow-md transition">
+          <h2 className="text-gray-500 text-sm">Total Products</h2>
+          <p className="text-3xl font-bold text-gray-800 mt-2">
+            {stats?.totalProducts}
+          </p>
         </div>
 
+        <div className="bg-white shadow-sm rounded-xl p-6 border hover:shadow-md transition">
+          <h2 className="text-gray-500 text-sm">Total Categories</h2>
+          <p className="text-3xl font-bold text-gray-800 mt-2">
+            {stats?.totalCategories}
+          </p>
+        </div>
+
+        <div className="bg-white shadow-sm rounded-xl p-6 border hover:shadow-md transition">
+          <h2 className="text-gray-500 text-sm">Registered Users</h2>
+          <p className="text-3xl font-bold text-gray-800 mt-2">
+            {stats?.totalUsers}
+          </p>
+        </div>
+
+      </div>
+
+      {/* MANAGEMENT SECTION */}
+      <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        {/* PRODUCTS */}
+        <div className="bg-white rounded-xl border p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">
+            Products
+          </h2>
+
+          <Link
+            to="/admin/products"
+            className="block text-blue-600 hover:underline mb-2"
+          >
+            Manage Products
+          </Link>
+        </div>
+
+        {/* CATEGORIES */}
+        <div className="bg-white rounded-xl border p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">
+            Categories
+          </h2>
+
+          <Link
+            to="/admin/categories"
+            className="block text-blue-600 hover:underline mb-2"
+          >
+            Manage Categories
+          </Link>
+        </div>
+
+        {/* USERS */}
+        <div className="bg-white rounded-xl border p-6 shadow-sm">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4">
+            Users
+          </h2>
+
+          <Link
+            to="/admin/users"
+            className="block text-blue-600 hover:underline mb-2"
+          >
+            Manage Users
+          </Link>
+        </div>
+
+      </div>
     </div>
-  )
-}
+  </div>
+)}
