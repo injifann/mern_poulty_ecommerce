@@ -32,11 +32,12 @@ export default function Cart() {
         }
     }
 
-    const saveProductQuantity = (product, change) => {
+    const saveProductQuantity = (item, change) => {
         setUpdatedProducts((prev) => {
             const findIndex = prev.findIndex(
-                (item) => item.product._id === product._id
+                (i) => i.product._id === item.product._id
             );
+
 
             if (findIndex > -1) {
                 const updated = [...prev];
@@ -51,12 +52,13 @@ export default function Cart() {
 
                 return updated;
             } else {
-                return [...prev, { product, quantity: product.quantity + change }];
+                
+                return [...prev, {product:item.product, quantity: item.quantity + change }];
             }
         });
     }
 
-    const DisplayedItem = cart?.items??[].map((item) => {
+    const displayedItem = (cart?.items??[]).map((item) => {
         const updatedProduct = updatedProducts.find(
             (u) => u.product._id === item.product._id
         );
@@ -94,7 +96,7 @@ export default function Cart() {
 
                 {/* Cart Items */}
                 <div className="space-y-4">
-                    {DisplayedItem.map((item) => (
+                    {displayedItem.map((item) => (
                         <div
                             key={item.product._id}
                             className="bg-white shadow-sm border rounded-lg p-4 flex justify-between items-center"
@@ -112,13 +114,14 @@ export default function Cart() {
                             {/* Quantity Controls */}
                             <div className="flex items-center gap-3">
                                 <button
-                                    onClick={() => saveProductQuantity(item.product, -1)}
+                                    onClick={() => saveProductQuantity(item, -1)}
                                     className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300"
                                 >
                                     -
                                 </button>
 
                                 <input
+                                    
                                     type="number"
                                     value={item.quantity}
                                     readOnly
@@ -126,7 +129,7 @@ export default function Cart() {
                                 />
 
                                 <button
-                                    onClick={() => saveProductQuantity(item.product, 1)}
+                                    onClick={() => saveProductQuantity(item, 1)}
                                     className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300"
                                 >
                                     +
@@ -140,7 +143,7 @@ export default function Cart() {
                 <div className="mt-6 bg-white border rounded-lg p-4">
                     <p className="text-gray-700">
                         <span className="font-semibold">Total Amount:</span>{" "}
-                        {DisplayedItem.reduce(
+                        {displayedItem.reduce(
                             (sum, item) =>
                                 sum + item.quantity * item.priceAtTimeOfOrder,
                             0
@@ -149,7 +152,7 @@ export default function Cart() {
 
                     <p className="text-gray-700 mt-1">
                         <span className="font-semibold">Total Items:</span>{" "}
-                        {DisplayedItem.reduce((sum, item) => sum + item.quantity, 0)}
+                        {displayedItem.reduce((sum, item) => sum + item.quantity, 0)}
                     </p>
                 </div>
 
@@ -157,7 +160,8 @@ export default function Cart() {
                 <div className="mt-6 flex gap-4">
                     <button
                         onClick={handleSave}
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition disabled:bg-red-300 disabled:cursor-not-allowed"
+                        disabled={updatedProducts.length==0}
                     >
                         Save Cart
                     </button>
@@ -168,7 +172,7 @@ export default function Cart() {
                         Proceed to Checkout
                     </button>
                     <button onClick={handleDelete}
-                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-400 transition"
+                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-400 transition "
                     >
                         delete
                     </button>
