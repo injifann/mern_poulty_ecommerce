@@ -5,20 +5,21 @@ import toast from 'react-hot-toast';
 import { Link } from 'react-router';
 
 export default function Login() {
-  const { login, googleAuth, isLoading} = useAuth();
+  const { login, googleAuth} = useAuth();
+  const [logginIn,setIsLogginIn] = useState(false)
   const [formData, setFormData] = useState({ email: '', password: '' });
 
   const handleSubmission = async (e) => {
     e.preventDefault();
 
-    if (isLoading) return;
-
     if (!formData.email.trim() || !formData.password.trim()) {
       toast.error("Please enter email and password");
       return;
     }
-
+    
+     setIsLogginIn(true)
      const res = await login(formData);
+     setIsLogginIn(false)
      if(res?.success === false)
      {
       toast.error(res?.message || "Failed to login");
@@ -70,10 +71,10 @@ export default function Login() {
 
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={logginIn}
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
           >
-            {isLoading ? "Logging in..." : "Login"}
+            {logginIn ? "Logging in..." : "Login"}
           </button>
         </form>
 
