@@ -1,3 +1,4 @@
+import AppError from "./CustomError.js"
 
 export const validateQuantity = (quantity)=>
 {
@@ -5,6 +6,10 @@ export const validateQuantity = (quantity)=>
  {
         throw new AppError ("please Enter product quantity",404)
 
+ }
+ if(typeof quantity === "number")
+ {
+   throw new AppError("quantity must be number");
  }
  if(quantity < 0)
  {
