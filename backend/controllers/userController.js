@@ -3,6 +3,10 @@ import User from "../models/User.js"
 import { OAuth2Client } from "google-auth-library";
 import { sendAuthResponse } from "../utilities/sendAuthResponse.js";
 import {sendErrorResponse} from "../utilities/sendErrorResponse.js";
+import { isValidObjectId } from "../utilities/isValidObjectId.js";
+import Cart from "../models/Cart.js";
+import Address from "../models/Address.js";
+import Order from '../models/Order.js'
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -78,13 +82,95 @@ export const login = async (req,res,next) =>
     {
         next(error)
     }
-
 }
+
 export const me = async(req,res)=>
 { if (!req.user) {
     {return sendErrorResponse(res,401,"User not found'")};
   }
-  return res.status(200).json(req.user);
+  return res.status(200).json({user:req.user});
 }
 
+export const changePassword = async (req,res,next)=>
+{
+  const id = req.user._id;
+  const {currentPassword,newPassword} = req.body;
+  if(!currentPassword || !newPassword)
+  {
+    return sendErrorResponse(res,400,"Please Enter current and new password");
+  }
+  if(!isValidObjectId(id))
+   {
+    return sendErrorResponse(res,400,"invalid user id");
+   }
+  try 
+  {
+    let user = await User.findById(id);
+    if(!user)
+    {
+      return sendErrorResponse(res,404,"user not found")
+    }
+    const isMatch = user.checkPassword(currentPassword);
+    if(!isMatch)
+    {
+      return sendErrorResponse(res,400,"password does not match");
+    }
+
+    user.password = newPassword;
+    await user.save();
+    return res.status(200).json({message:"password changed successfully"});
+  }
+  catch(error)
+  {
+    next(error)
+  }
+
+}
+
+
+export const deleteprofile = async (req,res,next)=>
+{
+      const id = req.user._id;
+      if(!id)
+      {
+        return sendErrorResponse(res,400,"please enter user id");
+      }
+      if(!isValidObjectId(id))
+      {
+        return sendErrorResponse(res,400,"invalid user id");
+      }
+      try{
+      const user = await User.findById(id);
+      if(!user)
+      {
+        return sendErrorResponse(res,404,"user does not found");
+      }
+      const cart = await Cart.findOne({user:id});
+
+      if(cart)
+      {
+        await cart.deleteOne();
+      }
+
+      const address = await Address.findOne({user:id});
+
+      if(address)
+      {
+        await address.deleteOne()
+      }
+     
+    const paidOrder = await Order.exists({user:id,paymentStatus:"paid"});
+
+    if(paidOrder)
+    {
+      return sendErrorResponse(res,400,"you cannot delete profile because you have paid orders. wait for your order ")
+    }
+   await user.deleteOne()
+   return res.status(200).json({message:"profile deleted successfully"})
+  }
+  catch(error)
+  {
+    next(error);
+  }
+}
 
