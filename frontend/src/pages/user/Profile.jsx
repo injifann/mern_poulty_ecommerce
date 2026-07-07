@@ -135,17 +135,13 @@ export default function Profile() {
   if(!user)
   {
     return (
-      <div className="flex h-screen items-center justify-center text-lg font-semibold">
-        please login to access your profile
-      </div>
+        <LoadingScreen message={"please login to access your profile"}/>
     );
   }
   if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center text-lg font-semibold">
-        Loading...
-      </div>
-    );
+   return (
+        <LoadingScreen message={"Loading"}/>
+        )
   }
 
   return (

@@ -38,7 +38,6 @@ export default function Cart() {
                 (i) => i.product._id === item.product._id
             );
 
-
             if (findIndex > -1) {
                 const updated = [...prev];
                 const newQuantity = updated[findIndex].quantity + change;
@@ -71,10 +70,8 @@ export default function Cart() {
 
     if (cartLoading) {
         return (
-            <div className="flex h-screen items-center justify-center text-gray-600 text-lg font-medium">
-                Loading cart...
-            </div>
-        );
+        <LoadingScreen message={"Loading Cat"}/>
+        )
     }
     if(!cart)
     {
@@ -121,7 +118,6 @@ export default function Cart() {
                                 </button>
 
                                 <input
-                                    
                                     type="number"
                                     value={item.quantity}
                                     readOnly

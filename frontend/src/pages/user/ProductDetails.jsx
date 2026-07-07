@@ -59,11 +59,9 @@ export default function ProductDetails() {
       fetchProduct();
   },[id])
   if(loading) return (
-   <div className="flex h-screen items-center justify-center text-lg font-medium text-gray-600">
-        Loading  product details...
-      </div>
-  )
-  if (!product._id)
+        <LoadingScreen message={"Loading product details"}/>
+        )
+if (!product._id)
 {
     return (<div className="flex h-screen items-center justify-center text-lg font-medium text-gray-600">
         Loading  product details...

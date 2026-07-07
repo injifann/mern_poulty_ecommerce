@@ -35,10 +35,9 @@ const fetchProducts = async () => {
   }, []);
 
   if (fetchingProducts) {
-    return (
-      <div className="flex h-screen items-center justify-center text-lg font-medium text-gray-600">
-        Loading fresh products...
-      </div>
+ 
+      return (
+        <LoadingScreen message={"Loading fresh products"}/>
     );
   }
 

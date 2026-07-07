@@ -3,8 +3,7 @@ import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
 import { Link } from 'react-router';
 import { useAuth } from '../../context/AuthContext';
-const api = import.meta.env.VITE_API_URL;
-
+import LoadingScreen from '../../layout/LoadingScreen';
 
 export default function Dashboard() {
     const {isLoading} = useAuth()
@@ -41,19 +40,14 @@ export default function Dashboard() {
     if(isLoading)
          {
         return (
-      <div className="flex h-screen items-center justify-center text-lg font-medium text-gray-600">
-        Loading admin dashboard
-      </div>
+        <LoadingScreen message={"Loading"}/>
         )
     }
         
-
     if(isLoadingStats)
-    {
-        return (
-      <div className="flex h-screen items-center justify-center text-lg font-medium text-gray-600">
-        Loading admin dashboard~
-      </div>
+    {  
+       return (
+        <LoadingScreen message={"Loading Admin dashboard"}/>
         )
     }
 

@@ -2,8 +2,7 @@ import axios from '../../api/axios';
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
 import ProductForm from '../../components/cards/ProductForm';
-const api = import.meta.env.VITE_API_URL;
-
+import LoadingScreen from '../../layout/LoadingScreen';
 export default function Products() {
 
      const [products,setProducts] = useState([]);
@@ -71,11 +70,9 @@ export default function Products() {
      await fetchProducts(nextPage);
      setIsLoadingMore(false)
     }
-    if(isFetchingProducts || isLoadingMore)return (
 
-     <div className="flex h-screen items-center justify-center text-lg font-medium text-gray-600">
-        Loading fresh products...
-    </div>
+    if(isFetchingProducts || isLoadingMore)return (
+    <LoadingScreen message={"Loading fresh products..."}/>
     )
  return (
   <div className="min-h-screen bg-gray-100 p-6">
@@ -101,7 +98,7 @@ export default function Products() {
       </div>
 
       <div>
-        <button onClick={setIsAddProduct(true)}>addProduct</button>
+        <button onClick={()=>setIsAddProduct(true)} className='rounded-md bg-green-600 px-4 py-2 my-2 text-sm font-medium text-white transition hover:bg-green-700'>addProduct</button>
       </div>
        {isaddProduct &&(<ProductForm setProducts={setProducts} setIsAddProduct={setIsAddProduct}/>)}
       {isUpdateProduct &&(<ProductForm product ={updatedProduct} setProducts={setProducts}  setIsUpdateProduct={setIsUpdateProduct}/>)}
