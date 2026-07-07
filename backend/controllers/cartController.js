@@ -38,7 +38,7 @@ export const updateCart = async (req,res,next) =>
 
   for (const item of updatedItems)
   {
-    if(typeof item.quantity !== "number" || item.quantity<1 || !item.productId || !isValidObjectId(item.productId) )
+    if(typeof item.quantity !== "number" || item.quantity<1 || !item.product._id || !isValidObjectId(item.product._id) )
     {
       return sendErrorResponse(res,400,"invalid product or quantity");
     }
@@ -55,17 +55,17 @@ export const updateCart = async (req,res,next) =>
     for (const Item of updatedItems)
     {
         const cartItem = cart.items.find((item)=>
-        item.product._id.toString() === Item.productId.toString());
+        item.product._id.toString() === Item.product._id.toString());
         if(!cartItem)
         {
-          return sendErrorResponse(res,404,`Product ${Item.productId} not found in cart`);
+          return sendErrorResponse(res,404,`Product ${Item.product._id} not found in cart`);
 
         }
     }
 
 
      const updates = new Map(updatedItems.map((item)=>[
-      item.productId.toString(),
+      item.product._id.toString(),
       item.quantity,
      ]))
 
@@ -178,7 +178,6 @@ export const updateCartQuantity = async (req,res,next)=>
         cart.items = cart.items.filter((item,index)=>index !==itemIndex);
         cart = await cart.save();
         return sendCartResponse(res,200,"successfully removed product form cart",cart);
-
        }
 
         cart.items[itemIndex].quantity=validQuantity;
