@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import ProductCard from "../../components/cards/ProductCard";
 import toast from "react-hot-toast";
 import axios from '../../api/axios'
+import { FiArrowRight,FiInfo,FiRefreshCw} from "react-icons/fi";
+import { FaLeaf, FaTruck,FaShieldAlt} from "react-icons/fa";
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -57,18 +59,35 @@ const fetchProducts = async () => {
           </p>
 
           <div className="mt-6 flex gap-4">
-            <button className="rounded-lg bg-indigo-600 px-6 py-3 text-white font-medium hover:bg-indigo-700 transition">
+            <button className="flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white transition hover:bg-indigo-700">
               Shop Now
+              <FiArrowRight />
             </button>
 
-            <button className="rounded-lg border border-gray-300 px-6 py-3 text-gray-700 hover:bg-gray-100 transition">
+            <button className="flex items-center gap-2 rounded-lg border border-gray-300 px-6 py-3 text-gray-700 transition hover:bg-gray-100">
+              <FiInfo />
               Learn More
             </button>
           </div>
 
-          <p className="mt-4 text-sm text-gray-500">
-            ✔ Fresh daily supply • ✔ Trusted farms • ✔ Fast delivery
-          </p>
+          <div className="mt-6 flex flex-wrap gap-6 text-sm text-gray-600">
+
+        <div className="flex items-center gap-2">
+            <FaLeaf className="text-green-600" />
+            Fresh Daily Supply
+          </div>
+
+          <div className="flex items-center gap-2">
+            <FaShieldAlt className="text-indigo-600" />
+            Trusted Farms
+          </div>
+
+          <div className="flex items-center gap-2">
+            <FaTruck className="text-orange-500" />
+            Fast Delivery
+        </div>
+
+      </div>
         </div>
 
         {/* Image */}
@@ -96,12 +115,13 @@ const fetchProducts = async () => {
           <div className="flex items-center justify-between gap-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
             <p className="truncate">Failed to fetch featured products</p>
 
-            <button
-              onClick={fetchProducts}
-              className="shrink-0 rounded-md bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700 transition"
-            >
-              Retry
-            </button>
+          <button
+            onClick={fetchProducts}
+            className="flex items-center gap-2 rounded-md bg-red-600 px-3 py-1 text-xs font-medium text-white transition hover:bg-red-700"
+          >
+            <FiRefreshCw />
+            Retry
+          </button>
           </div>
         )}
         <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -126,9 +146,10 @@ const fetchProducts = async () => {
             products. Limited time offer for new customers.
           </p>
 
-          <button className="mt-6 rounded-lg bg-white px-6 py-3 font-semibold text-indigo-600 hover:bg-gray-100 transition">
-            Join Now
-          </button>
+        <button className="mt-6 flex items-center gap-2 rounded-lg bg-white px-6 py-3 font-semibold text-indigo-600 transition hover:bg-gray-100">
+          Join Now
+          <FiArrowRight />
+        </button>
         </div>
       </section>
     </div>
