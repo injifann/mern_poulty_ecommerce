@@ -7,14 +7,17 @@ import {useCart} from '../../context/CartContext'
 export default function ProductCard({ product }) {
   const { addToCart,cartLoading} = useCart();
   const [quantity, setQuantity] = useState(1);
+  const [isAddintToCart,setIsAddingToCart] = useState(false);
 
   const controlQuantity = (increment) => {
     if (quantity + increment < 1) return;
     setQuantity(quantity + increment);
   };
   const handleAddToCart = async(quantity) => {
-    
+
+       setIsAddingToCart(true)
        const res = await addToCart(product,quantity);
+       setIsAddingToCart(false);
        if(res.success)
        {
         toast.success(res.message);
@@ -102,8 +105,9 @@ export default function ProductCard({ product }) {
 
         {/* Add to Cart */}
         <button
+          disabled={isAddintToCart}
           onClick={() => handleAddToCart(quantity)} disabled={cartLoading || product.status === "out_of_stock"}
-          className="rounded-lg bg-indigo-600 px-5 py-2 font-medium text-white transition hover:bg-indigo-700 active:scale-95"
+          className="rounded-lg bg-indigo-600 px-5 py-2 font-medium text-white transition hover:bg-indigo-700 active:scale-95 disabled:bg-black"
         >
           Add to Cart
         </button>
