@@ -1,7 +1,7 @@
 import axios from '../../api/axios';
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
-import ProductForm from '../../components/cards/ProductForm';
+import ProductForm from '../../components/Forms/ProductForm';
 import LoadingScreen from '../../layout/LoadingScreen';
 export default function Products() {
 
@@ -19,9 +19,8 @@ export default function Products() {
        try
        {
         setIsFetchingProducts(true);
-        const res = await axios.get(`${api}/api/admin/getProducts?page=${pageNumber}&limit=10`);
+        const res = await axios.get(`/api/admin/getProducts?page=${pageNumber}&limit=10`);
         setProducts(prev=>replace?res.data.products:([...prev,...res.data.products]))
-
        }
        catch(error)
        {
@@ -70,7 +69,6 @@ export default function Products() {
      await fetchProducts(nextPage);
      setIsLoadingMore(false)
     }
-
     if(isFetchingProducts || isLoadingMore)return (
     <LoadingScreen message={"Loading fresh products..."}/>
     )
@@ -132,21 +130,21 @@ export default function Products() {
 
             <tbody className="divide-y divide-gray-200">
 
-              {products.map((product) => (
+              {products?.map((product) => (
                 <tr
-                  key={product._id}
+                  key={product?._id}
                   className="transition hover:bg-gray-50"
                 >
                   <td className="px-6 py-4 font-medium text-gray-800">
-                    {product.title}
+                    {product?.title}
                   </td>
 
                   <td className="px-6 py-4">
-                    {product.quantity}
+                    {product?.quantity}
                   </td>
 
                   <td className="px-6 py-4">
-                    {product.category?.name}
+                    {product?.category?.name}
                   </td>
 
                   <td className="px-6 py-4">
@@ -161,12 +159,12 @@ export default function Products() {
 
                       <button
                         onClick={() =>
-                          handleProductDeletion(product._id)
+                          handleProductDeletion(product?._id)
                         }
-                        disabled={deletingId === product._id}
+                        disabled={deletingId === product?._id}
                         className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
                       >
-                        {deletingId === product._id
+                        {deletingId === product?._id
                           ? "Deleting..."
                           : "Delete"}
                       </button>
