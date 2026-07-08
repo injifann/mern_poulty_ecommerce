@@ -14,6 +14,8 @@ import Dashboard from './pages/admin/Dashboard';
 import { useAuth } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
 import Profile from './pages/user/Profile';
+import ProductList from './pages/admin/Products';  
+import Categories from './pages/admin/Categories';
 
 export default function App() {
   
@@ -29,6 +31,8 @@ export default function App() {
         <Route path='/shop' element={<Shop/>}/>
         <Route path='/profile' element = {<Profile/>}/>
         <Route path='/admin/dashboard' element={<Dashboard/>}/>
+        <Route path='/admin/products' element={<ProductList/>}/>
+        <Route path ='admin/categories' element = {<Categories/>}/>
       </Routes> 
 </>
 )
