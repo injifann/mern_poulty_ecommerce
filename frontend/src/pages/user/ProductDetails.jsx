@@ -7,8 +7,7 @@ import toast from 'react-hot-toast';
 import { InputRating } from '../../components/common/InputRating';
 import { useEffect } from 'react';
 import { Rating } from '../../components/common/Rating';
-const api = import.meta.env.VITE_API_URL;
-
+import LoadingScreen from '../../layout/LoadingScreen';
 export default function ProductDetails() {
     const {id} = useParams();
 
@@ -44,7 +43,7 @@ export default function ProductDetails() {
       {
          try
          { setLoading(true);
-            const response = await axios.get(`${api}/api/products/product/${id}`);
+            const response = await axios.get(`/api/products/product/${id}`);
             setProduct(response.data.product);
          }
          catch(error)
@@ -58,15 +57,9 @@ export default function ProductDetails() {
       }
       fetchProduct();
   },[id])
-  if(loading) return (
+  if(loading || !product._id) return (
         <LoadingScreen message={"Loading product details"}/>
         )
-if (!product._id)
-{
-    return (<div className="flex h-screen items-center justify-center text-lg font-medium text-gray-600">
-        Loading  product details...
-      </div>)
-}
 return (
   <div className="mx-auto max-w-7xl px-6 py-10">
     <div className="grid gap-10 lg:grid-cols-2">

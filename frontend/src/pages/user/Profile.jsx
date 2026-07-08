@@ -6,6 +6,7 @@ import { Link } from "react-router";
 import toast from "react-hot-toast";
 import AddressCard from "../../components/cards/AddressCard";
 import { useNavigate } from "react-router";
+import LoadingScreen from "../../layout/LoadingScreen";
 
 export default function Profile() {
   const { user, isLoading, logout } = useAuth();
@@ -34,7 +35,7 @@ export default function Profile() {
     }
     catch(error)
     {
-      toast.error(error.response?.data?.message || "Failed to fetch user address")
+      console.log(error.response?.data?.message || "failed to load user address");
     }
   }
   useEffect(()=>{fetchUserAddress()},[user])

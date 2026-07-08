@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useCart } from '../../context/CartContext'
 import toast from 'react-hot-toast';
-
+import LoadingScreen from '../../layout/LoadingScreen';
 export default function Cart() {
     const { cart, cartLoading, updateCart,deleteCart } = useCart();
     const [updatedProducts, setUpdatedProducts] = useState([]);

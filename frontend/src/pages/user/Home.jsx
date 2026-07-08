@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import axios from '../../api/axios'
 import { FiArrowRight,FiInfo,FiRefreshCw} from "react-icons/fi";
 import { FaLeaf, FaTruck,FaShieldAlt} from "react-icons/fa";
+import LoadingScreen from "../../layout/LoadingScreen";
 
 const api = import.meta.env.VITE_API_URL;
 
@@ -40,7 +41,6 @@ const fetchProducts = async () => {
         <LoadingScreen message={"Loading fresh products"}/>
     );
   }
-
   return (
     <div className="bg-gray-50">
       {/* HERO SECTION */}
@@ -110,6 +110,9 @@ const fetchProducts = async () => {
         <p className="mt-2 text-gray-600">
           Handpicked fresh products available today
         </p>
+       
+          {products.length===0 &&(<p className="mt-2 text-gray-600">no products available</p>)}
+     
         {error && (
           <div className="flex items-center justify-between gap-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-600">
             <p className="truncate">Failed to fetch featured products</p>
