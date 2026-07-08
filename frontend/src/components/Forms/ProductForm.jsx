@@ -1,11 +1,37 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
 import axios from '../../api/axios';
+import LoadingScreen from '../../layout/LoadingScreen';
 
 export default function ProductForm({product,setProducts, setIsUpdateProduct,setIsAddProduct}) {
   
     const [productData,setProductData] = useState(product || {title:"",description:"",price:"",quantity:"",category:"",images:[]});
     const [isAddingProduct,setIsAddingProduct] = useState(false);
+    const [categories,setCategories] = useState([]);
+    const [isFetchingCategories,setIsFetchingCategories] = useState(true)
+
+    useEffect(()=>
+      {
+     const fetchCategories =async() =>
+     {
+      try
+      {
+        setIsFetchingCategories(true);
+        const res = await axios.get("api/category/getAllCategory");
+        setCategories(res.data.categories);
+      }
+      catch(error)
+      {
+        toast.error(error.response?.data?.message)
+      }
+      finally
+      {
+       setIsFetchingCategories(false);
+      }
+
+     };
+     fetchCategories()
+    },[])
 
     const handleSubmit = async(e)=>
     {
@@ -14,7 +40,19 @@ export default function ProductForm({product,setProducts, setIsUpdateProduct,set
         if(validated)
         {
         try
-        {    setIsAddingProduct(true)
+        {   const formData = new FormData();
+            formData.append("title",productData.title);
+            formData.append("description",productData.description);
+            formData.append("price",productData.price);
+            formData.append("quantity",productData.quantity);
+            formData.append("category",productData.category);
+
+            for (const image of productData.images)
+            {
+              formData.append("images",image)
+            }
+
+           setIsAddingProduct(true)
             if(product)
             {
             const res = await axios.put(`/api/admin/updateproduct/${product._id}`,productData);
@@ -23,7 +61,7 @@ export default function ProductForm({product,setProducts, setIsUpdateProduct,set
             }
             else
             {
-            const res = await axios.post("/api/admin/addproduct",productData);
+            const res = await axios.post("/api/admin/addproduct",formData);
             setIsAddProduct(false);
             setProducts(prev=>[...prev,res.data.product]);
             }
@@ -80,7 +118,13 @@ export default function ProductForm({product,setProducts, setIsUpdateProduct,set
         }
     })
    }
-
+ 
+   if(isFetchingCategories)
+   {
+    return (
+      <LoadingScreen message='"fetching categories'/>
+    )
+   }
 return (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
 
@@ -167,13 +211,26 @@ return (
             Category
           </label>
 
-          <input
-            type="text"
-            name="category"
-            value={productData.category?.name}
-            onChange={handleProductData}
-            className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:outline-none"
-          />
+             <select
+              name="category"
+              value={productData.category?._id || productData.category || ""}
+              onChange={handleProductData}
+              className="w-full rounded-lg border border-gray-300 bg-white px-4 py-3 text-gray-700 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+            >
+              <option value="">
+                Select category
+              </option>
+
+              {categories?.map((category) => (
+                <option
+                  key={category._id}
+                  value={category._id}
+                >
+                  {category.name}
+                </option>
+              ))}
+
+            </select>
         </div>
 
         <div>
