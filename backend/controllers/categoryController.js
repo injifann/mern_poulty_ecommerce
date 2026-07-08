@@ -122,7 +122,7 @@ export const updateCategory = async (req,res,next)=>
 export const deleteCategory = async (req,res,next) =>
 {
     const categoryId = req.params.id;
-    if(!isValidObjectId(id))
+    if(!isValidObjectId(categoryId))
     {
         return sendErrorResponse (res,400,"invalid category id")
     }
@@ -138,7 +138,7 @@ export const deleteCategory = async (req,res,next) =>
             return sendErrorResponse(res,400,"Please delete or reassign its subcategories first")
          }
           const deletedCategory = await Category.findByIdAndDelete(categoryId);
-         return  deletedCategory ? res.status(200).json({message:"category successfull deleted",deletedProduct}) :
+         return  deletedCategory ? res.status(200).json({message:"category successfull deleted",deletedCategory}) :
          sendErrorResponse(res,404,"category does not exist");
 
     }

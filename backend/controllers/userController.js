@@ -25,7 +25,7 @@ export const googleAuth = async (req,res,next)=>
     if(!user)
     {
       user = await User.create({userName:name || email.split("@")[0],email:email,googleId:sub});
-      const Apptoken = generateToken(user._id);
+      const Apptoken = generateToken(user);
       return sendAuthResponse(201,"user successfully created",user);
     }
         if(!user.googleId)

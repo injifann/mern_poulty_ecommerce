@@ -35,10 +35,10 @@ export const updateCart = async (req,res,next) =>
   {
     return sendErrorResponse(res,400,"please update products first");
   }
-
+  
   for (const item of updatedItems)
   {
-    if(typeof item.quantity !== "number" || item.quantity<1 || !item.product._id || !isValidObjectId(item.product._id) )
+    if(!validateQuantity(item.quantity) || !item.product._id || !isValidObjectId(item.product._id) )
     {
       return sendErrorResponse(res,400,"invalid product or quantity");
     }
