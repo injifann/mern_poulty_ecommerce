@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "../../api/axios";
-import userProfile from "../../assets/secondaregg.png";
+import userProfile from "../../assets/profileIcon.png";
 import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router";
 import toast from "react-hot-toast";
