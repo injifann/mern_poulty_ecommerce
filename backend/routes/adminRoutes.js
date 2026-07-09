@@ -15,7 +15,4 @@ router.post("/deletecategory",protect,admin,deleteCategory);
 router.post("/updatecategory",protect,admin,updateCategory);
 router.get("/getstats",protect,admin,getstats);
 router.get("/getProducts",protect,admin,getProducts);
-
-
-
 export default router
