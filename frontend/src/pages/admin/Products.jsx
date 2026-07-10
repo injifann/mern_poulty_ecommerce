@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast';
 import ProductForm from '../../components/Forms/ProductForm';
 import LoadingScreen from '../../layout/LoadingScreen';
+import BackButton from '../../components/common/BackButton';
 export default function Products() {
 
      const [products,setProducts] = useState([]);
@@ -191,7 +192,7 @@ export default function Products() {
           {isLoadingMore ? "Loading..." : "Load More"}
         </button>
       </div>
-
+        <BackButton to={"/admin/dashboard"}/>
     </div>
   </div>
 )}

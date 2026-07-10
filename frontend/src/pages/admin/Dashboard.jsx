@@ -124,7 +124,7 @@ export default function Dashboard() {
           </h2>
 
           <Link
-            to="/admin/users"
+            to="/admin/manageusers"
             className="block text-blue-600 hover:underline mb-2"
           >
             Manage Users
