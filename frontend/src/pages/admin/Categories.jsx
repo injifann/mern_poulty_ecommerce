@@ -5,7 +5,7 @@ import toast from 'react-hot-toast';
 import CategoryForm from '../../components/Forms/CategoryForm'
 import axios from '../../api/axios';
 import LoadingScreen from '../../layout/LoadingScreen';
-import backButton from '../../components/common/BackButton';
+import BackButton from '../../components/common/BackButton';
 
 export default function Categories() {
   const [categories,setCategories] = useState([]);
@@ -208,8 +208,8 @@ export default function Categories() {
 
         )}
 
-       <BackButton to={"/admin/dashboard"}/>
       </div>
+       <BackButton to={"/admin/dashboard"}/>
 
     </div>
   </div>
