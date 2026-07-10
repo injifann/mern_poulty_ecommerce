@@ -1,24 +1,39 @@
 import React, { useEffect } from 'react'
 import Navbar from './components/common/Navbar'
-import { Routes,Route, } from 'react-router'
-import { useState } from 'react'
-import toast from 'react-hot-toast';
+import { Routes,Route, Navigate} from 'react-router'
 import Home from './pages/user/Home';
 import Login from './pages/Login';
 import Register from './pages/register';
-import axios from 'axios'
 import ProductDetails from './pages/user/ProductDetails';
 import Cart from './pages/user/Cart';
 import Shop from './pages/user/Shop';
 import Dashboard from './pages/admin/Dashboard';
 import { useAuth } from './context/AuthContext';
-import { CartProvider } from './context/CartContext';
 import Profile from './pages/user/Profile';
 import ProductList from './pages/admin/Products';  
 import Categories from './pages/admin/Categories';
+import ControllUser from './pages/admin/ControllUser'
 
 export default function App() {
   
+  function AdminRoute({children})
+  {
+       const {user} = useAuth();
+       if(user?.role !=="admin")
+        {
+          return <Navigate to = "/login"/>
+        } 
+        return children;
+  }
+  function UserRoute ({children})
+  {
+    const {user} = useAuth();
+    if(user.role!=='client')
+    {
+       return <Navigate to = "/login"/>
+    }
+    return children
+  }
   return (
 <>
       <Navbar/>
@@ -29,10 +44,11 @@ export default function App() {
         <Route path='/product/:id' element ={<ProductDetails/>}/>
         <Route path='/cart' element={<Cart/>}/>
         <Route path='/shop' element={<Shop/>}/>
-        <Route path='/profile' element = {<Profile/>}/>
-        <Route path='/admin/dashboard' element={<Dashboard/>}/>
-        <Route path='/admin/products' element={<ProductList/>}/>
-        <Route path ='admin/categories' element = {<Categories/>}/>
+        <Route path='/profile' element ={<UserRoute> <Profile/> </UserRoute>}/>
+        <Route path='admin/dashboard' element = {<AdminRoute> <Dashboard/> </AdminRoute>} />
+        <Route path='admin/products' element = {<AdminRoute> <ProductList/> </AdminRoute>} />
+        <Route path='admin/manageusers' element = {<AdminRoute> <ControllUser/> </AdminRoute>} />
+        <Route path='admin/categories' element = {<AdminRoute> <Categories/> </AdminRoute>} />
       </Routes> 
 </>
 )
