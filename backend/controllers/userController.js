@@ -69,12 +69,21 @@ export const register = async (req,res,next) =>
 export const login = async (req,res,next) =>
 {
     const {email,password} = req.body;
-    if(!email || !password){return sendErrorResponse(res,400,"please enter all information")};
+    if(!email){return sendErrorResponse(res,400,"please enter all information")};
       
     try
     {
         const user = await User.findOne({email});
-        if(!user){return sendErrorResponse(res,401,"invalid password or email")};
+
+        if(!user){return sendErrorResponse(res,401,"you do not have account.please create one")};
+        if(user && !user.password && user.googleId)
+        {
+          return sendErrorResponse(res,400,"you registered with google, please login with google");
+        }
+        if(!password)
+        {
+          sendErrorResponse(res,400,"please enter all information");
+        }
         if(!await user.checkPassword(password)){return sendErrorResponse(res,401,"invalid password or email")};
         sendAuthResponse(res,200,"Login successful",user);
     }
