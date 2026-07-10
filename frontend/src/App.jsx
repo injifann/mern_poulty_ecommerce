@@ -13,12 +13,14 @@ import Profile from './pages/user/Profile';
 import ProductList from './pages/admin/Products';  
 import Categories from './pages/admin/Categories';
 import ControllUser from './pages/admin/ControllUser'
+import LoadingScreen from './layout/LoadingScreen';
 
 export default function App() {
   
+   const {user,isLoading} = useAuth();
+
   function AdminRoute({children})
   {
-       const {user} = useAuth();
        if(user?.role !=="admin")
         {
           return <Navigate to = "/login"/>
@@ -27,12 +29,15 @@ export default function App() {
   }
   function UserRoute ({children})
   {
-    const {user} = useAuth();
     if(user.role!=='client')
     {
        return <Navigate to = "/login"/>
     }
     return children
+  }
+  if(isLoading)
+  {
+    return <LoadingScreen message='Loading'/>
   }
   return (
 <>
