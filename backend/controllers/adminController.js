@@ -5,15 +5,112 @@ import cloudinary from '../config/cloudinary.js';
 import { sendErrorResponse } from "../utilities/sendErrorResponse.js";
 import Category from "../models/Category.js";
 import User from "../models/User.js";
+import { isValidObjectId } from "../utilities/isValidObjectId.js";
+import Cart from "../models/Cart.js";
+import Address from "../models/Address.js";
+import Order from "../models/Order.js";
 
+export const changeUserStatus = async(req,res,next) =>
+{
+  const id = req.params.id;
+  if(!isValidObjectId(id))
+  {
+        return sendErrorResponse(res,400,"the id is invalid or null");
+  }
+  try
+  {
+    const user = await User.findById(id);
+    if(!user)
+    {
+      return sendErrorResponse(res,404,"user does not found");
+    }
+    user.isActive = !user.isActive;
+    const savedUser = await user.save();
+    return res.status(200).json({message:`${savedUser.isActive?"Account activated successfully":"Account deactivated successfully"}`,user:savedUser})
+  }
+  catch(error)
+  {
+    next(error)
+  }
+}
+export const deleteUser = async (req,res,next)=>
+{
+  const id = req.params.id;
+  if(!isValidObjectId(id))
+  {
+    return sendErrorResponse(res,400,"the id is invalid or null");
+  }
+  try{
+  const userExist = await User.findById(id);
+  if(!userExist)
+  {
+    return sendErrorResponse(res,404,"user does not found");
+  }
+   const Paidorder = await Order.findOne({user:id,paymentStatus:"paid"});
+
+  if(Paidorder)
+  {
+    return sendErrorResponse(res,400,"you cannot delete user who have paid order. please make refund first");
+  }
+  await Promise.all([
+    Cart.deleteMany({user:id}),
+    Address.deleteMany({user:id}),
+  ])
+  await User.findByIdAndDelete(id);
+  return res.status(200).json({message:"successfully deleted use"});
+}
+catch(error)
+{
+  next(error)
+}
+}
+export const getUsers = async (req,res,next) =>
+{
+  const {userName,email} = req.query;
+  const page = Math.max(Number(req.query.page) ||1,1);
+  const limit = Math.min(Number(req.query.limit) ||10,50);
+  const skip =(page -1)*limit;
+
+  let query = {};
+  if(userName)
+  {
+    query.userName=userName;
+  }
+  if(email)
+  {
+    query.email=email;
+  }
+
+  try
+  {
+    const users = await User.find({...query,role:"client"}).skip(skip).limit(limit).select("-password");
+   
+    return res.status(200).json({message:"successful",users})
+  }
+  catch(error)
+  {
+    next(error)
+  }
+
+}
 export const getProducts = async(req,res,next)=>
 {
+    const {category,title} = req.query;
+    let query = {};
+    if(category)
+    {
+      query.category = category;
+    }
+    if(title)
+    {
+      query.title = title;
+    }
     const page = Number(req.query.page)||1;
     const limit = Number(req.query.limit)||10;
     const skip = (page-1)*limit;
     try
     {
-     const products = await Product.find().skip(skip).limit(limit).populate("category","name");
+     const products = await Product.find(query).skip(skip).limit(limit).populate("category","name");
      return res.status(200).json({message:"successfull",products});
     }
     catch(error)
@@ -21,6 +118,7 @@ export const getProducts = async(req,res,next)=>
         next(error);
     }
 }
+
 export const getstats = async(req, res, next)=>
 {
   try 
