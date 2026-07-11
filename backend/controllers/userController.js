@@ -1,5 +1,6 @@
 import { generateToken } from "../utilities/generateToken.js";
 import User from "../models/User.js"
+import cloudinary from "../config/cloudinary.js";
 import { OAuth2Client } from "google-auth-library";
 import { sendAuthResponse } from "../utilities/sendAuthResponse.js";
 import {sendErrorResponse} from "../utilities/sendErrorResponse.js";
@@ -137,7 +138,7 @@ export const changePassword = async (req,res,next)=>
 }
 
 
-export const deleteprofile = async (req,res,next)=>
+export const deleteProfile = async (req,res,next)=>
 {
       const id = req.user._id;
       if(!id)
@@ -180,6 +181,42 @@ export const deleteprofile = async (req,res,next)=>
   catch(error)
   {
     next(error);
+  }
+}
+
+export const uploadProfileImage = async (req,res,next) =>
+{
+  const id = req.user?._id;
+  if(!isValidObjectId(id))
+  {
+    return sendErrorResponse(res,400,"invalid user id");
+  }
+  if(!req.file)
+  {
+    return sendErrorResponse(res,400,"please upload image first")
+  }
+  try
+  {
+    const user = await User.findById(id);
+    if(!user)
+    {
+      return sendErrorResponse(res,404,"user does not found");
+    }
+    if(user.profileImage?.publicId)
+    {
+      await cloudinary.uploader.destroy(user.profileImage.publicId);
+    }
+
+    const result = await cloudinary.uploader.upload(req.file.path,{folder:"profile_images"});
+    user.profileImage.url=result.secure_url;
+    user.profileImage.publicId=result.public_id;
+    user.profileImage.isPrimary=true;
+    await user.save();
+    return res.status(200).json({message:"profile image successfuly updated",user})
+  }
+  catch(error)
+  {
+    next(error)
   }
 }
 
