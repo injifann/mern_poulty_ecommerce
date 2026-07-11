@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router";
 import React from 'react'
 import { FaArrowLeft } from "react-icons/fa";
-export default function backButton({to,text= "back"}) {
+export default function BackButton({to,text= "back"}) {
     const navigate = useNavigate();
 
   return (
