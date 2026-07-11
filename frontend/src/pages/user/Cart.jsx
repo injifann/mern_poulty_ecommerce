@@ -2,9 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { useCart } from '../../context/CartContext'
 import toast from 'react-hot-toast';
 import LoadingScreen from '../../layout/LoadingScreen';
+import BackButton from '../../components/common/BackButton';
+import { FaTrash } from 'react-icons/fa';
+import { useNavigate } from 'react-router';
+import { FaShoppingCart } from "react-icons/fa";
 export default function Cart() {
-    const { cart, cartLoading, updateCart,deleteCart } = useCart();
+    const { cart, cartLoading, updateCart,deleteCart,removeFromCart } = useCart();
     const [updatedProducts, setUpdatedProducts] = useState([]);
+    const [deletingId,setIsDeletingId] = useState(null);
+    const navigate = useNavigate()
+    console.log(cart);
     const handleSave = async () => {
         try {
             const res = await updateCart(updatedProducts);
@@ -68,6 +75,21 @@ export default function Cart() {
         };
     });
 
+    const handleRemoveFromCart = async(productId)=>
+    {
+        setIsDeletingId(productId)
+        const res = await removeFromCart(productId);
+        if(res.success===false)
+        {
+            toast.error(res.message)
+        }
+        else
+        {
+        toast.success(res.message);
+        }
+        setIsDeletingId(null);
+    }
+
     if (cartLoading) {
         return (
         <LoadingScreen message={"Loading Cat"}/>
@@ -90,53 +112,112 @@ export default function Cart() {
                 <h1 className="text-2xl font-bold mb-6 text-gray-800">
                     Your Cart
                 </h1>
+             {cart && cart.items?.length === 0 && (
+            <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 bg-white py-16 px-6 text-center shadow-sm">
+                <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100">
+                <FaShoppingCart className="text-4xl text-blue-600" />
+                </div>
+
+                <h2 className="text-2xl font-bold text-gray-800">
+                Your cart is empty
+                </h2>
+
+                <p className="mt-2 max-w-md text-gray-500">
+                Looks like you haven't added any products yet. Start shopping and add
+                your favorite products to your cart.
+                </p>
+
+                <button
+                onClick={() => navigate("/shop")}
+                className="mt-8 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700 hover:shadow-lg"
+                >
+                Continue Shopping
+                </button>
+            </div>)} 
 
                 {/* Cart Items */}
                 <div className="space-y-4">
-                    {displayedItem.map((item) => (
-                        <div
-                            key={item.product._id}
-                            className="bg-white shadow-sm border rounded-lg p-4 flex justify-between items-center"
-                        >
-                            {/* Product Info */}
-                            <div>
-                                <p className="font-semibold text-gray-800">
-                                    {item.product.title}
+                    {displayedItem?.map((item) => (
+                       <div
+                            key={item?.product._id}
+                            className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
+                            >
+                            {/* Left Side */}
+                            <div className="flex items-center gap-4 flex-1">
+
+                                {/* Product Image */}
+                                <img
+                                src={item?.product?.images?.[0].url}
+                                alt={item?.product?.title}
+                                className="h-24 w-24 rounded-lg border object-cover"
+                                />
+
+                                {/* Product Details */}
+                                <div>
+                                <h3 className="text-lg font-semibold text-gray-800">
+                                    {item?.product.title}
+                                </h3>
+
+                                <p className="mt-1 text-sm text-gray-500">
+                                    Price: ${item?.priceAtTimeOfOrder}
                                 </p>
-                                <p className="text-sm text-gray-500">
-                                    ${item.priceAtTimeOfOrder}
+
+                                <p className="text-sm text-green-600 font-medium mt-1">
+                                    In Stock
                                 </p>
+                                </div>
                             </div>
 
-                            {/* Quantity Controls */}
-                            <div className="flex items-center gap-3">
+                            {/* Right Side */}
+                            <div className="flex items-center gap-5">
+
+                                {/* Quantity */}
+                                <div className="flex items-center overflow-hidden rounded-lg border border-gray-300">
+
                                 <button
                                     onClick={() => saveProductQuantity(item, -1)}
-                                    className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300"
+                                    className="flex h-10 w-10 items-center justify-center bg-gray-100 text-lg hover:bg-gray-200"
                                 >
                                     -
                                 </button>
 
                                 <input
                                     type="number"
-                                    value={item.quantity}
+                                    value={item?.quantity}
                                     readOnly
-                                    className="w-14 text-center border rounded py-1"
+                                    className="w-14 text-center font-medium outline-none"
                                 />
 
                                 <button
                                     onClick={() => saveProductQuantity(item, 1)}
-                                    className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded hover:bg-gray-300"
+                                    className="flex h-10 w-10 items-center justify-center bg-gray-100 text-lg hover:bg-gray-200"
                                 >
                                     +
                                 </button>
+                                </div>
+
+                                {/* Item Total */}
+                                <div className="w-24 text-right">
+                                <p className="font-semibold text-gray-800">
+                                    ${(item.quantity * item.priceAtTimeOfOrder).toFixed(2)}
+                                </p>
+                                </div>
+
+                                {/* Delete */}
+                                <button
+                                disabled={item.product._id === deletingId}
+                                onClick={() => handleRemoveFromCart(item.product._id)}
+                                className="flex h-10 w-10 items-center justify-center rounded-lg text-red-500 transition hover:bg-red-100 hover:text-red-600 disabled:opacity-50"
+                                >
+                                <FaTrash />
+                                </button>
+
                             </div>
-                        </div>
-                    ))}
+                            </div> ))}
                 </div>
 
                 {/* Summary */}
-                <div className="mt-6 bg-white border rounded-lg p-4">
+               {cart?.length===0 && <div className="mt-6 bg-white border rounded-lg p-4">
                     <p className="text-gray-700">
                         <span className="font-semibold">Total Amount:</span>{" "}
                         {displayedItem.reduce(
@@ -151,9 +232,10 @@ export default function Cart() {
                         {displayedItem.reduce((sum, item) => sum + item.quantity, 0)}
                     </p>
                 </div>
+                 }
 
                 {/* Actions */}
-                <div className="mt-6 flex gap-4">
+                {cart?.length===0 && <div className="mt-6 flex gap-4">
                     <button
                         onClick={handleSave}
                         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition disabled:bg-red-300 disabled:cursor-not-allowed"
@@ -173,8 +255,11 @@ export default function Cart() {
                         delete
                     </button>
                 </div>
+                }
 
             </div>
+               
+            <BackButton to={"/"}/>
         </div>
     );
 }
