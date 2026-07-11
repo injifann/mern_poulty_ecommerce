@@ -18,8 +18,8 @@ export const getMyCart = async (req,res,next)=>
       return sendErrorResponse(res,404,"cart not found");
     }
     
-    await cart.populate("items.product","title");
-    return sendCartResponse(res,200,"cart successfully fetched",cart);
+    const populatedCart = await cart.populate("items.product","title images");
+    return sendCartResponse(res,200,"cart successfully fetched",populatedCart);
 
   }
   catch(error)
@@ -78,7 +78,7 @@ export const updateCart = async (req,res,next) =>
        }
       }
 
-    await cart.save();
+    (await cart.save()).populate("items.product","title images");
     return sendCartResponse(res,200,"successfully updated cart",cart);
     
   }
@@ -104,6 +104,7 @@ export const addToCart = async (req,res,next) =>
          if(!cart)
           { if(product.quantity<validQuantity){ return sendErrorResponse(res,400,"in sufficient stock");}
             cart = await Cart.create({user:req.user._id,items:[{product:productId,quantity:quantity,priceAtTimeOfOrder:product.price}]});
+            await cart.populate("items.product","title images");
             sendCartResponse(res,201,"cart successfully created",cart);
           }
 
@@ -120,6 +121,7 @@ export const addToCart = async (req,res,next) =>
             cart.items.push({product:productId,quantity:validQuantity,priceAtTimeOfOrder:product.price})
         }
         cart = await cart.save();
+        await cart.populate("items.product","title images");
         sendCartResponse(res,200,"cart successfully updated",cart);
 
     }
@@ -129,6 +131,7 @@ export const addToCart = async (req,res,next) =>
     }
 
 }
+
 export const RemoveProductFromCart = async (req,res,next)=>    
 {
    const {productId} = req.body;
@@ -136,15 +139,17 @@ export const RemoveProductFromCart = async (req,res,next)=>
   try
   {
     await getValidProduct(productId,false)
-    let cart = await findCart(req.user._id,false);
+    let cart = await findCart(req.user._id,false)
+  
 
-    const itemExist = cart.items.some(item=>item.product.toString()===productId.toString());
+    const itemExist = cart.items.some(item=>item.product._id.toString()===productId.toString());
     if(!itemExist)
     {
        return sendErrorResponse(res,404,"product does not exist in the cart")
     }
-    cart.items = cart.items.filter(item=>item.product.toString()!==productId.toString());
-    cart = await cart.save();
+    cart.items = cart.items.filter(item=>item.product._id.toString()!==productId.toString());
+    cart = await cart.save()
+    cart = await cart.populate("items.product","title images");
     sendCartResponse(res,200,"product removed successfully",cart);
 
   }
