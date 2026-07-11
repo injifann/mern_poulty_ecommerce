@@ -9,8 +9,8 @@ import { useEffect } from 'react';
 import { Rating } from '../../components/common/Rating';
 import LoadingScreen from '../../layout/LoadingScreen';
 export default function ProductDetails() {
-    const {id} = useParams();
-
+    const {sku} = useParams();
+    console.log(sku);
     const [product,setProduct] = useState({});
     const {addToCart,cartLoading} = useCart();
     const [loading,setLoading] = useState(true);
@@ -43,7 +43,8 @@ export default function ProductDetails() {
       {
          try
          { setLoading(true);
-            const response = await axios.get(`/api/products/product/${id}`);
+            const response = await axios.get(`/api/products/product/${sku}`);
+            console.log(response.data.product.averageRating);
             setProduct(response.data.product);
          }
          catch(error)
@@ -56,7 +57,7 @@ export default function ProductDetails() {
          }
       }
       fetchProduct();
-  },[id])
+  },[sku])
   if(loading || !product._id) return (
         <LoadingScreen message={"Loading product details"}/>
         )
@@ -120,7 +121,7 @@ return (
           </p>
 
           <div>
-            <Rating rating={product.rating || 0} />
+            <Rating rating={product.averageRating || 0} />
           </div>
 
           <div>
