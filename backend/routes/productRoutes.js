@@ -7,7 +7,7 @@ const router = new express.Router();
 router.get("/getallproducts",getAllProducts);
 router.post("/rateproduct/:id",protect,rateProduct);
 router.get("/category/:id",getProductByCategory);
-router.get("/product/:id",getProductById)
+router.get("/product/:sku",getProductById)
 
 
 export default router;
