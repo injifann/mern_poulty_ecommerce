@@ -7,14 +7,16 @@ import toast from "react-hot-toast";
 import AddressCard from "../../components/cards/AddressCard";
 import { useNavigate } from "react-router";
 import LoadingScreen from "../../layout/LoadingScreen";
+import { useRef } from "react";
 
 export default function Profile() {
-  const { user, isLoading, logout } = useAuth();
+  const { user,setUser, isLoading, logout } = useAuth();
   const [userAddress, setUserAddress] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [passwordDelete,setPasswordDelete] = useState();
   const [isDeletingAccount,setIsDeletingAccount] = useState(false);
+  const fileInputRef = useRef()
 
   const [passwordData, setPasswordData] = useState({
     currentPassword: "",
@@ -132,7 +134,30 @@ export default function Profile() {
       }
     }
   }
-
+  const uploadProfileImage = async (file)=>
+  {
+    const formData = new FormData();
+    formData.append("profileImage",file);
+    try
+    {
+      const res = await axios.put("/api/user/uploadProfileImage",formData);
+      setUser(res.data.user);
+      toast.success(res.data.message);
+    }
+    catch(error)
+    {
+     toast.error(error.response?.data?.message || "failed to upload images")
+    }
+  }
+  const handleImageChange = (e)=>
+  {
+    const file = e.target.files[0];
+    if(!file)
+    {
+      return
+    }
+    uploadProfileImage(file);
+  }
   if(!user)
   {
     return (
@@ -150,13 +175,14 @@ export default function Profile() {
 
       {/* Profile */}
       <div className="bg-white rounded-xl shadow p-6 flex flex-col md:flex-row items-center gap-6">
-
-        <img
-          src={user?.profileImage??userProfile}
-          alt="Profile"
-          className="w-32 h-32 rounded-full object-cover border"
-        />
-
+       <div onClick={()=>fileInputRef.current.click()}>
+          <img
+            src={user?.profileImage.url || userProfile}
+            alt="Profile"
+            className="w-32 h-32 rounded-full object-cover border"
+          />
+          <input ref={fileInputRef} type="file" className="hidden" accept="image/*" onChange={handleImageChange}/>
+       </div>
         <div className="flex-1">
           <h1 className="text-3xl font-bold">
             {user?.userName}
