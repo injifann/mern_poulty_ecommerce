@@ -5,15 +5,21 @@ import { sendErrorResponse } from '../utilities/sendErrorResponse.js';
 import Category from '../models/Category.js';
 import { isValidObjectId } from '../utilities/isValidObjectId.js';
 import { getValidProduct } from '../utilities/getValidProduct.js';
+import { buildProductQuery } from '../utilities/buildProductQuery.js';
+import { buildSortBy } from '../utilities/buildSortBy.js';
 
 
 export const getProductById = async (req,res,next)=>
 {
-   const productId = req.params.id;
+   const sku = req.params.sku;
    try
    {   
-      const product = await getValidProduct(productId,true);
-      await product.populate ("category","name");
+      const product = await Product.findOne({sku:sku});
+      if(!product)
+      {
+        return sendErrorResponse(res,404,"product does not found")
+      }
+      await product.populate("category","name");
       return res.status(200).json({message:"succesfull",product});
    }
    catch(error)
@@ -21,23 +27,22 @@ export const getProductById = async (req,res,next)=>
     next(error)
    }
 }
-export const getAllProducts = async(req,res)=>
+export const getAllProducts = async(req,res,next)=>
     {
+        const page = Math.max(Number(req.page)||1,1);
+        const limit = Math.min(Number(req.limit)||2,50);
+        const skip= (page-1)*limit;
+        const {sort,search,category} = req.query;
         try
         {
-         const {category,search } = req.query;
-
-         let query = {};
-
-         if(category){query.category = category} 
-         if(search){query.title={$regex:search,$options:'i'}};
-
-         const products = await Product.find(query).populate("category","name slug").sort({createdAt:-1});
+         const query = buildProductQuery(search,category);
+         const sortBy = buildSortBy(sort);
+         const products = await Product.find(query).sort(sortBy).populate("category","name sku");
          return res.status(200).json({message:"successfull",products});
         }
         catch(error)
         {
-          return res.status(500).json({message:error.message});
+          next(error)
         }
  }
 
@@ -107,6 +112,6 @@ export const getAllProducts = async(req,res)=>
    }
    catch(error)
    {
-    return res.status(500).json({message:error.message});
+    next(error)
    }
  }
