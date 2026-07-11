@@ -16,10 +16,8 @@ export default function ProductCard({ product }) {
   };
   const handleAddToCart = async(quantity,id) => {
 
-      //  setIsAddingToCart(true)
        setAddingId(id);
        const res = await addToCart(product,quantity);
-      //  setIsAddingToCart(false);
        setAddingId(false)
        if(res.success)
        {
@@ -34,7 +32,7 @@ export default function ProductCard({ product }) {
 
   return (
     <div className="group overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-      <Link to={`/product/${product._id}`}>
+      <Link to={`/product/${product.sku}`}>
         {/* Product Image */}
         <div className="overflow-hidden bg-gray-100">
           <img
@@ -51,12 +49,9 @@ export default function ProductCard({ product }) {
           </h2>
 
           <div className="flex items-center gap-2">
-            {product.rating ? (
+            {product.averageRating ? (
               <>
-                <Rating rating={product.rating} />
-                <span className="text-sm text-gray-500">
-                  ({product.rating})
-                </span>
+                <Rating rating={product.averageRating} />
               </>
             ) : (
               <span className="text-sm text-gray-400">No rating yet</span>
