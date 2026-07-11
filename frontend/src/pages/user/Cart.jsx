@@ -95,14 +95,14 @@ export default function Cart() {
         <LoadingScreen message={"Loading Cat"}/>
         )
     }
-    if(!cart)
-    {
-        return (
-            <div className="flex h-screen items-center justify-center text-red-500 text-lg font-medium">
-                cart does not found
-            </div>
-        );
-    }
+    // if(!cart)
+    // {
+    //     return (
+    //         <div className="flex h-screen items-center justify-center text-red-500 text-lg font-medium">
+    //             cart does not found
+    //         </div>
+    //     );
+    // }
 
     return (
         <div className="min-h-screen bg-gray-50 p-6">
@@ -112,14 +112,14 @@ export default function Cart() {
                 <h1 className="text-2xl font-bold mb-6 text-gray-800">
                     Your Cart
                 </h1>
-             {cart && cart.items?.length === 0 && (
+             {cart && cart.items?.length === 0 || !cart && (
             <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 bg-white py-16 px-6 text-center shadow-sm">
                 <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100">
                 <FaShoppingCart className="text-4xl text-blue-600" />
                 </div>
 
                 <h2 className="text-2xl font-bold text-gray-800">
-                Your cart is empty
+                 {!cart? "You do not have cart":"Your cart is empty"} 
                 </h2>
 
                 <p className="mt-2 max-w-md text-gray-500">
