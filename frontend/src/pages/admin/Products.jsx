@@ -4,6 +4,10 @@ import toast from 'react-hot-toast';
 import ProductForm from '../../components/Forms/ProductForm';
 import LoadingScreen from '../../layout/LoadingScreen';
 import BackButton from '../../components/common/BackButton';
+import { FaTrash } from 'react-icons/fa';
+import { FaEdit } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
+
 export default function Products() {
 
      const [products,setProducts] = useState([]);
@@ -14,13 +18,23 @@ export default function Products() {
      const [isaddProduct,setIsAddProduct] = useState(false);
      const [isUpdateProduct,setIsUpdateProduct] = useState(false);
      const [updatedProduct,setupdatedProduct] = useState(null);
+     const [filters,setFilters] = useState({search:"",sort:"",category:""});
+     const [searchingText,setSearchingText] = useState("");
+     const [replace,setReplace] = useState(true);
+     const [categories,setCategories] = useState([]);
 
-     const fetchProducts = async (pageNumber,replace=false) =>
+     const fetchProducts = async () =>
      {
        try
        {
         setIsFetchingProducts(true);
-        const res = await axios.get(`/api/admin/getProducts?page=${pageNumber}&limit=10`);
+        const res = await axios.get(`/api/admin/getProducts` ,{
+          params:{
+           page:page,
+           limit:10,
+           ...filters,
+          }
+        });
         setProducts(prev=>replace?res.data.products:([...prev,...res.data.products]))
        }
        catch(error)
@@ -33,10 +47,28 @@ export default function Products() {
         setIsFetchingProducts(false);
        }
      }
-     useEffect(()=>{fetchProducts(1,true)},[])
+     useEffect(()=>{fetchProducts()},[filters])
+     useEffect(()=>{
+      const fetchCategories = async()=>
+      {
+        try
+        {
+          const res = await axios.get("api/category/getallcategory");
+          setCategories(res.data.categories);
+        }
+        catch(error)
+        {
+         console.log("error");
+        }
+      }
+      fetchCategories();
+     },[])
+
     const searchProduct = ()=>
     {
-
+      setPage(1);
+      setReplace(true)
+      setFilters(prev=>({...filters,search:searchingText}));
     }
 
     const handleProductDeletion = async (productId)=>
@@ -65,10 +97,24 @@ export default function Products() {
     const handleLoadMore = async()=>
     {
      const nextPage = page + 1;
-     setPage(nextPage)
+     setPage(nextPage);
+     setReplace(false);
      setIsLoadingMore(true);
      await fetchProducts(nextPage);
      setIsLoadingMore(false)
+    }
+    
+    const handleFilter = async (e)=>
+    {
+      setPage(1);
+      setReplace(true);
+      setFilters(prev=>({...filters,category:e.target.value}));
+    }
+    const handleSort = async (e)=>
+    {
+     setPage(1);
+     setReplace(true);
+     setFilters(prev=>({...filters,sort:e.target.value}))  
     }
     if(isFetchingProducts || isLoadingMore)return (
     <LoadingScreen message={"Loading fresh products..."}/>
@@ -87,13 +133,64 @@ export default function Products() {
             Manage your store products.
           </p>
         </div>
-
+         <div className='flex items-center gap-2'>
         <input
           type="search"
           placeholder="Search products..."
           className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2 outline-none transition focus:border-blue-500 md:w-80"
-          onChange={searchProduct}
+          onChange={(e)=>setSearchingText(e.target.value)}
         />
+        <button onClick={searchProduct} className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600 text-white transition hover:bg-blue-700 active:scale-95">
+           <FaSearch/>
+        </button>
+      </div>
+      </div>
+
+           {/* Filters */}
+      <div className="flex flex-col gap-4 sm:flex-row">
+
+        {/* Sort */}
+        <div className="flex flex-col">
+          <label className="mb-1 text-sm font-medium text-gray-700">
+            Sort By
+          </label>
+
+          <select
+            value={filters.sort}
+            onChange={handleSort}
+            className="rounded-lg border border-gray-300 bg-white px-4 py-2 outline-none focus:border-blue-500"
+          >
+            <option value="">Select Sort</option>
+            <option value="newest">Newest</option>
+            <option value="oldest">Oldest</option>
+            <option value="highestRated">Highest Rated</option>
+          </select>
+        </div>
+
+        {/* Category */}
+        <div className="flex flex-col">
+          <label className="mb-1 text-sm font-medium text-gray-700">
+            Category
+          </label>
+
+          <select
+            value={filters.category}
+            onChange={handleFilter}
+            className="rounded-lg border border-gray-300 bg-white px-4 py-2 outline-none focus:border-blue-500"
+          >
+            <option value="">All Categories</option>
+
+            {categories?.map(category => (
+              <option
+                key={category._id}
+                value={category._id}
+              >
+                {category.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
       </div>
 
       <div>
@@ -122,6 +219,11 @@ export default function Products() {
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
                   Category
                 </th>
+     
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600">
+                  Rating
+                </th>
+     
 
                 <th className="px-6 py-4 text-center text-sm font-semibold text-gray-600">
                   Actions
@@ -147,6 +249,10 @@ export default function Products() {
                   <td className="px-6 py-4">
                     {product?.category?.name}
                   </td>
+                   <td className="px-6 py-4">
+                    {product?.averageRating}
+                  </td>
+
 
                   <td className="px-6 py-4">
                     <div className="flex justify-center gap-3">
@@ -155,7 +261,7 @@ export default function Products() {
                         onClick={() => handleProductUpdate(product)}
                         className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
                       >
-                        Update
+                        <FaEdit/>
                       </button>
 
                       <button
@@ -167,7 +273,7 @@ export default function Products() {
                       >
                         {deletingId === product?._id
                           ? "Deleting..."
-                          : "Delete"}
+                          : <FaTrash/>}
                       </button>
 
                     </div>
