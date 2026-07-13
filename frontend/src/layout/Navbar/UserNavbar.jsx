@@ -1,9 +1,12 @@
 import React from "react";
 import { NavLink } from "react-router";
 import { useAuth } from "../../context/AuthContext";
+import { useCart } from "../../context/CartContext";
 
 export default function UserNavbar() {
   const { user, logout } = useAuth();
+  const {cart} = useCart();
+  const length= cart?.totalItems;
 
   const navLinkStyle = ({ isActive }) =>
     `transition ${
@@ -37,8 +40,13 @@ export default function UserNavbar() {
           </li>
 
           <li>
-            <NavLink to="/cart" className={navLinkStyle}>
+            <NavLink to="/cart" className={`${navLinkStyle} relative`}>
               Cart
+              {length > 0 && (
+                <span className="absolute -top-2 -right-4 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
+                  {length}
+                </span>
+              )}
             </NavLink>
           </li>
 
