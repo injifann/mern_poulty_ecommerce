@@ -9,6 +9,8 @@ import { isValidObjectId } from "../utilities/isValidObjectId.js";
 import Cart from "../models/Cart.js";
 import Address from "../models/Address.js";
 import Order from "../models/Order.js";
+import { buildProductQuery } from "../utilities/buildProductQuery.js";
+import { buildSortBy } from "../utilities/buildSortBy.js";
 
 export const changeUserStatus = async(req,res,next) =>
 {
@@ -57,7 +59,7 @@ export const deleteUser = async (req,res,next)=>
     Address.deleteMany({user:id}),
   ])
   await User.findByIdAndDelete(id);
-  return res.status(200).json({message:"successfully deleted use"});
+  return res.status(200).json({message:"successfully deleted user"});
 }
 catch(error)
 {
@@ -95,22 +97,15 @@ export const getUsers = async (req,res,next) =>
 }
 export const getProducts = async(req,res,next)=>
 {
-    const {category,title} = req.query;
-    let query = {};
-    if(category)
-    {
-      query.category = category;
-    }
-    if(title)
-    {
-      query.title = title;
-    }
-    const page = Number(req.query.page)||1;
-    const limit = Number(req.query.limit)||10;
+    const page = Math.max(Number(req.query.page)||1,1);
+    const limit = Math.min(Number(req.query.limit)||10,50);
     const skip = (page-1)*limit;
+    const {search,sort,category} = req.query;
+    const query = buildProductQuery(search,category);
+    const sortBy = buildSortBy(sort);
     try
     {
-     const products = await Product.find(query).skip(skip).limit(limit).populate("category","name");
+     const products = await Product.find(query).skip(skip).limit(limit).populate("category","name").sort(sortBy);
      return res.status(200).json({message:"successfull",products});
     }
     catch(error)
@@ -164,8 +159,8 @@ export const addProduct = async (req , res,next)=>{
 
         upLoadedImages[0].isPrimary=true;
 
-        const products = await Product.create({title,sku,description,price,quantity,category,images:upLoadedImages});
-        return res.status(201).json({message:"successfully created product",products});
+        const product = await Product.create({title,sku,description,price,quantity,category,images:upLoadedImages});
+        return res.status(201).json({message:"successfully created product",product});
     
     }
     catch(error)
