@@ -245,7 +245,7 @@ export const CartProvider = ({children})=>
           }
 
         const updates = new Map (updatedItems.map((item)=>[
-            item.productId.toString(),
+            item.product._id.toString(),
             item.quantity,]))
          for (const item of localCart.items)
          {
