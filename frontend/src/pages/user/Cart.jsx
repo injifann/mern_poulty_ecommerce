@@ -5,9 +5,10 @@ import LoadingScreen from '../../layout/LoadingScreen';
 import BackButton from '../../components/common/BackButton';
 import { FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router';
-// import { FaShoppingCart } from "react-icons/fa";
 import EmptyCart from '../../layout/EmptyCart';
+import { useAuth } from '../../context/AuthContext';
 export default function Cart() {
+    const {user} = useAuth();
     const { cart, cartLoading, updateCart,deleteCart,removeFromCart } = useCart();
     const [updatedProducts, setUpdatedProducts] = useState([]);
     const [deletingId,setIsDeletingId] = useState(null);
@@ -90,6 +91,17 @@ export default function Cart() {
         setIsDeletingId(null);
     }
 
+    const handleProcedToCheckout = ()=>
+    {
+        if(!user)
+        {
+            toast.success("please create account first")
+        }
+        else
+        {
+            navigate("/order")
+        }
+    }
     if (cartLoading) {
         return (
         <LoadingScreen message={"Loading Cat"}/>
@@ -189,7 +201,7 @@ export default function Cart() {
                 </div>
 
                 {/* Summary */}
-               {cart?.length!==0 && <div className="mt-6 bg-white border rounded-lg p-4">
+               {cart && cart?.items?.length!==0 && <div className="mt-6 bg-white border rounded-lg p-4">
                     <p className="text-gray-700">
                         <span className="font-semibold">Total Amount:</span>{" "}
                         {displayedItem.reduce(
@@ -207,7 +219,7 @@ export default function Cart() {
                  }
 
                 {/* Actions */}
-                {cart?.length!==0 && <div className="mt-6 flex gap-4">
+                {cart && cart?.items?.length!==0 && <div className="mt-6 flex gap-4">
                     <button
                         onClick={handleSave}
                         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition disabled:bg-red-300 disabled:cursor-not-allowed"
@@ -216,7 +228,7 @@ export default function Cart() {
                         Save Cart
                     </button>
 
-                    <button onClick={()=>navigate("/order")}
+                    <button onClick={handleProcedToCheckout}
                         className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
                     >
                         Proceed to Checkout
