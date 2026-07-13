@@ -88,8 +88,7 @@ export const AuthProvider = ({children})=>
         }
         catch(error)
         {
-            setError(error.response?.data?.message || "Failed to register")
-
+            return {success:false,message:error.response?.data?.message || "Failed to register"}
         }
         finally
         {
