@@ -5,10 +5,9 @@ import axios from '../../api/axios'
 import { FiArrowRight,FiInfo,FiRefreshCw} from "react-icons/fi";
 import { FaLeaf, FaTruck,FaShieldAlt} from "react-icons/fa";
 import LoadingScreen from "../../layout/LoadingScreen";
-
-const api = import.meta.env.VITE_API_URL;
-
+import { useNavigate } from "react-router";
 export default function Home() {
+  const navigate = useNavigate()
   const [products, setProducts] = useState([]);
   const [error,setError] = useState('')
   const [fetchingProducts, setIsFetchingProducts] = useState(false);
@@ -18,7 +17,10 @@ const fetchProducts = async () => {
         setIsFetchingProducts(true);
 
         const res = await axios.get(
-          `${api}/api/products/getallproducts`
+          `/api/products/getallproducts`,{params:{
+            page:1,
+            limit:10
+          }}
         );
 
         setProducts(res.data.products);
@@ -58,12 +60,12 @@ const fetchProducts = async () => {
           </p>
 
           <div className="mt-6 flex gap-4">
-            <button className="flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white transition hover:bg-indigo-700">
+            <button onClick={()=>navigate("/shop")} className="flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white transition hover:bg-indigo-700">
               Shop Now
               <FiArrowRight />
             </button>
 
-            <button className="flex items-center gap-2 rounded-lg border border-gray-300 px-6 py-3 text-gray-700 transition hover:bg-gray-100">
+            <button onClick={()=>toast.success("this is demo app and only for demonstration")} className="flex items-center gap-2 rounded-lg border border-gray-300 px-6 py-3 text-gray-700 transition hover:bg-gray-100">
               <FiInfo />
               Learn More
             </button>
@@ -148,7 +150,7 @@ const fetchProducts = async () => {
             products. Limited time offer for new customers.
           </p>
 
-        <button className="mt-6 flex items-center gap-2 rounded-lg bg-white px-6 py-3 font-semibold text-indigo-600 transition hover:bg-gray-100">
+        <button onClick={()=>toast.success("this is dema app")} className="mt-6 flex items-center gap-2 rounded-lg bg-white px-6 py-3 font-semibold text-indigo-600 transition hover:bg-gray-100">
           Join Now
           <FiArrowRight />
         </button>
