@@ -71,7 +71,10 @@ export default function Shop() {
  const handleSort = (e)=>
  {
   const sortBy = e.target.value;
-  console.log(sortBy);
+  if(!sortBy)
+  {
+    return;
+  }
   resetProducts()
   setFilters(prev=>({...prev,sort:sortBy}));
 
