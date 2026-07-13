@@ -54,16 +54,18 @@ export default function ProductForm({product,setProducts, setIsUpdateProduct,set
 
            setIsAddingProduct(true)
             if(product)
-            {
+            {        
             const res = await axios.put(`/api/admin/updateproduct/${product._id}`,productData);
             setIsAddingProduct(false);
-            setProducts(prev=>[...prev,res.data.product]);
+            setProducts(prev=>prev.map(p=>p._id===product._id?res.data.product:p));
+            toast.success("product success fully updated");
             }
             else
             {
             const res = await axios.post("/api/admin/addproduct",formData);
             setIsAddProduct(false);
             setProducts(prev=>[...prev,res.data.product]);
+             toast.success("product success fully updated");
             }
 
 
