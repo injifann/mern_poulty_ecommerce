@@ -8,7 +8,7 @@ export default function Register() {
     const {register,googleAuth,isLoading} = useAuth();
     const [formData,setFormData] = useState({userName:'',email:'',password:''});
 
-    const handleSubmission = (e) =>
+    const handleSubmission = async(e) =>
     {
      e.preventDefault();
      if(isLoading)
@@ -22,7 +22,11 @@ export default function Register() {
      }
      else 
      {
-        register(formData);
+        const res = await register(formData);
+        if(res.success===false)
+        {
+          toast.error(res.message || "Failed to register");
+        }
      }
     } 
 
