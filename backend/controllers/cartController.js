@@ -60,7 +60,6 @@ export const updateCart = async (req,res,next) =>
 
         }
     }
-
      const updates = new Map(updatedItems.map((item)=>[
       item.product._id.toString(),
       item.quantity,
@@ -154,44 +153,6 @@ export const RemoveProductFromCart = async (req,res,next)=>
   {
       next(error)
   }
-}
-
-export const updateCartQuantity = async (req,res,next)=>
-{
-    const {productId,quantity} = req.body;
-
-    try
-    {
-       const validQuantity = validateQuantity(quantity);
-       const product = await getValidProduct(productId,false);
-
-       let cart = await findCart(req.user._id,false);
-
-       const itemIndex = cart.items.findIndex(item=>item.product.toString() === productId.toString());
-
-       if(itemIndex === -1){ return sendErrorResponse(res,404,"product does not found in a cart")};
-       if(product.quantity < validQuantity)
-       {
-        return sendErrorResponse(res,400,"insufficient stock");
-       }
-
-       if(validQuantity === 0)
-       {
-        cart.items = cart.items.filter((item,index)=>index !==itemIndex);
-        cart = await cart.save();
-        return sendCartResponse(res,200,"successfully removed product form cart",cart);
-       }
-
-        cart.items[itemIndex].quantity=validQuantity;
-        cart = await cart.save();
-        return sendCartResponse(res,200,"successfully updated",cart);
-
-    }
-    catch(error)
-    {
-      next(error)
-    }
-   
 }
 
 export const deleteCart = async (req,res,next)=>
