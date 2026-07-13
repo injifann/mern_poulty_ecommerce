@@ -11,6 +11,7 @@ import Address from "../models/Address.js";
 import Order from "../models/Order.js";
 import { buildProductQuery } from "../utilities/buildProductQuery.js";
 import { buildSortBy } from "../utilities/buildSortBy.js";
+import fs from "fs/promises";
 
 export const changeUserStatus = async(req,res,next) =>
 {
@@ -154,6 +155,7 @@ export const addProduct = async (req , res,next)=>{
         for (const file of req.files)
         {
               const result=await cloudinary.uploader.upload(file.path,{folder:"products" });
+              await fs.unlink(file.path);
               upLoadedImages.push({ url:result.secure_url,publicId:result.public_id,alt:title})
         }
 
@@ -194,6 +196,7 @@ export const updateProduct = async(req,res)=>
                 for(const file of req.files)
                 {
                     const result = await cloudinary.uploader.upload(file.path,{folder:"product"});
+                    await fs.unlink(file.path);
                     upLoadedImages.push({
                         url:result.secure_url,
                         publicId:result.public_id,
