@@ -172,7 +172,7 @@ export const addProduct = async (req , res,next)=>{
 
 }
 
-export const updateProduct = async(req,res)=>
+export const updateProduct = async(req,res,next)=>
 {
        const {title,description,price,quantity,category}=req.body;
 
@@ -213,7 +213,8 @@ export const updateProduct = async(req,res)=>
             if(category) updateFields.category=category;
             if(upLoadedImages.length>0) updateFields.images=upLoadedImages;
 
-           const updatedProduct = await Product.findByIdAndUpdate(req.params.id,updateFields,{new:true,runValidators:true});
+           let updatedProduct = await Product.findByIdAndUpdate(req.params.id,updateFields,{new:true,runValidators:true});
+           updatedProduct= await updatedProduct.populate("category","name");
            return res.status(201).json({message:"successfully updated",product:updatedProduct});
 
 
