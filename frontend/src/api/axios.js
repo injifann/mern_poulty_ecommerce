@@ -2,11 +2,12 @@ import axios from "axios";
 
 const api = import.meta.env.VITE_API_URL;
 
+console.log("VITE_API_URL =", api);
+
 const axiosInstance = axios.create({
   baseURL: api,
 });
 
-// 🔐 Interceptor → automatically attach token
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
