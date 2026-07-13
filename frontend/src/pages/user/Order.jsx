@@ -51,8 +51,47 @@ export default function Order() {
                   <h2 className="mb-5 text-xl font-semibold">
                       Order Items
                   </h2>
+              
+                <div className="space-y-4">
+                  {cart?.items?.map((item) => (
+                    <div
+                      key={item?.product._id}
+                      className="flex items-center gap-4 rounded-lg border border-gray-200 p-4"
+                    >
+                      {/* Product Image */}
+                      <img
+                        src={item?.product?.images?.[0]?.url}
+                        alt={item?.product.title}
+                        className="h-20 w-20 rounded-lg object-cover"
+                      />
 
-                  {/* Product Card */}
+                      {/* Product Info */}
+                      <div className="flex-1">
+                        <h3 className="text-lg font-semibold text-gray-800">
+                          {item.product.title}
+                        </h3>
+
+                        <p className="mt-1 text-sm text-gray-500">
+                          Quantity: <span className="font-medium">{item.quantity}</span>
+                        </p>
+
+                        <p className="mt-1 text-sm text-gray-500">
+                          Unit Price:
+                          <span className="ml-1 font-medium text-gray-700">
+                            ${item.priceAtTimeOfOrder}
+                          </span>
+                        </p>
+                      </div>
+
+                      {/* Total */}
+                      <div className="text-right">
+                        <p className="text-lg font-bold text-gray-800">
+                          ${(item.quantity * item.priceAtTimeOfOrder).toFixed(2)}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
 
               </div>
 
