@@ -8,11 +8,11 @@ import { addCategory,deleteCategory,updateCategory ,getAllCategory,getCategoryBy
 const router = new express.Router();
 
 router.post("/addproduct",protect, admin,upload.array("images"),addProduct);
-router.put("/updateproduct",protect,admin,upload.array("images"),updateProduct);
+router.put("/updateproduct/:id",protect,admin,upload.array("images"),updateProduct);
 router.delete("/deleteproduct/:id",protect,admin,deleteProduct);
 router.post("/addcategory",protect,admin,addCategory);
 router.post("/deletecategory",protect,admin,deleteCategory);
-router.post("/updatecategory",protect,admin,updateCategory);
+router.post("/updatecategory/:id",protect,admin,updateCategory);
 router.get("/getstats",protect,admin,getstats);
 router.get("/getProducts",protect,admin,getProducts);
 router.get("/getusers",protect,admin,getUsers);
