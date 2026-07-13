@@ -158,7 +158,7 @@ export default function Categories() {
                 {categories?.map(category => (
 
                   <tr
-                    key={category._id}
+                    key={category?._id}
                     className="transition hover:bg-gray-50"
                   >
 
@@ -171,7 +171,7 @@ export default function Categories() {
                     </td>
 
                     <td className="px-6 py-4 text-gray-600">
-                      {category.parent?.name || "None"}
+                      {category?.parent?.name || "None"}
                     </td>
 
                     <td className="px-6 py-4">
@@ -186,10 +186,10 @@ export default function Categories() {
 
                         <button
                           onClick={() => handleDelete(category)}
-                          disabled={deletingCategoryId === category._id}
+                          disabled={deletingCategoryId === category?._id}
                           className="rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
                         >
-                          {deletingCategoryId === category._id
+                          {deletingCategoryId === category?._id
                             ? "Deleting..."
                             : "Delete"}
                         </button>
