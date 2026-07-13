@@ -29,15 +29,15 @@ export const getProductById = async (req,res,next)=>
 }
 export const getAllProducts = async(req,res,next)=>
     {
-        const page = Math.max(Number(req.page)||1,1);
-        const limit = Math.min(Number(req.limit)||2,50);
+        const {page,limit,sort,search,category,} = req.query;
+        const currentPage = Math.max(Number(page)||1,1);
+        const currentLimit = Math.min(Number(limit)||8,50);
         const skip= (page-1)*limit;
-        const {sort,search,category} = req.query;
         try
         {
          const query = buildProductQuery(search,category);
          const sortBy = buildSortBy(sort);
-         const products = await Product.find(query).sort(sortBy).populate("category","name sku");
+         const products = await Product.find(query).sort(sortBy).skip(skip).limit(currentLimit).populate("category","name sku");
          return res.status(200).json({message:"successfull",products});
         }
         catch(error)
