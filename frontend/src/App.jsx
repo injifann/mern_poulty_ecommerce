@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import Navbar from './components/common/Navbar'
+import Navbar from './layout/Navbar/Navbar'
 import { Routes,Route, Navigate} from 'react-router'
 import Home from './pages/user/Home';
 import Login from './pages/Login';
@@ -14,6 +14,8 @@ import ProductList from './pages/admin/Products';
 import Categories from './pages/admin/Categories';
 import ControllUser from './pages/admin/ControllUser'
 import LoadingScreen from './layout/LoadingScreen';
+import Order from './pages/user/Order';
+import Footer from './layout/Footer';
 
 export default function App() {
   
@@ -49,12 +51,14 @@ export default function App() {
         <Route path='/product/:sku' element ={<ProductDetails/>}/>
         <Route path='/cart' element={<Cart/>}/>
         <Route path='/shop' element={<Shop/>}/>
+        <Route path='/order' element={<Order/>}/>
         <Route path='/profile' element ={<UserRoute> <Profile/> </UserRoute>}/>
         <Route path='admin/dashboard' element = {<AdminRoute> <Dashboard/> </AdminRoute>} />
         <Route path='admin/products' element = {<AdminRoute> <ProductList/> </AdminRoute>} />
         <Route path='admin/manageusers' element = {<AdminRoute> <ControllUser/> </AdminRoute>} />
         <Route path='admin/categories' element = {<AdminRoute> <Categories/> </AdminRoute>} />
       </Routes> 
+      <Footer/>
 </>
 )
 }
