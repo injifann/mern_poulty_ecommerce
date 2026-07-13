@@ -16,7 +16,8 @@ export default function ControllUser()
     const [loading,setLoading] = useState(true);
     const [deletingId,setDeletingId] = useState(null);
     const [updatingId,setUpdatingId] = useState(null);
-    const [isLoadingMore,setIsLoadingMore] = useState(false);
+    const [userName, setUserName] = useState("");
+    const [email, setEmail] = useState("");
 
     useEffect(()=>{fetchUsers(1,true)},[])
     const fetchUsers = async (nextPage,replace=false)  =>
@@ -24,7 +25,21 @@ export default function ControllUser()
       try
       {
          setLoading(true);
-         const res = await axios.get(`api/admin/getusers?page=${nextPage}&limit=10`);
+      const params = new URLSearchParams({
+        page: nextPage,
+        limit: 10,
+      });
+
+      if (userName.trim()) {
+        params.append("userName", userName);
+      }
+
+      if (email.trim()) {
+        params.append("email", email);
+      }
+      
+
+      const res = await axios.get(`/api/admin/getusers?${params.toString()}`);
          setUsers(prev=>replace?res.data.users:[...prev,...res.data.users]);
       }
       catch(error)
@@ -36,6 +51,17 @@ export default function ControllUser()
          setLoading(false);
       }
     }
+    const handleSearch = async () =>
+       {
+        setPage(1);
+        await fetchUsers(1, true);
+      };
+    const handleReset = async () => {
+      setUserName("");
+      setEmail("");
+      setPage(1);
+      await fetchUsers(1, true);
+    };
     const handleStatus = async(id) =>
     {
         setUpdatingId(id);
@@ -95,7 +121,45 @@ export default function ControllUser()
       <h2 className="text-3xl font-bold text-gray-800 mb-8">
         Registered Users
       </h2>
+        {/* Search Section */}
+        <div className="mb-8 rounded-xl bg-white p-5 shadow-md">
+          <div className="grid gap-4 md:grid-cols-2">
 
+            <input
+              type="text"
+              placeholder="Search by username..."
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              className="rounded-lg border px-4 py-2 outline-none focus:border-green-600"
+            />
+
+            <input
+              type="email"
+              placeholder="Search by email..."
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="rounded-lg border px-4 py-2 outline-none focus:border-green-600"
+            />
+          </div>
+
+          <div className="mt-4 flex gap-3">
+
+            <button
+              onClick={handleSearch}
+              className="rounded-lg bg-green-600 px-5 py-2 text-white hover:bg-green-700"
+            >
+              Search
+            </button>
+
+            <button
+              onClick={handleReset}
+              className="rounded-lg border px-5 py-2 hover:bg-gray-100"
+            >
+              Reset
+            </button>
+
+          </div>
+        </div>
       <div className="space-y-5">
         {users.map((user) => (
           <div
