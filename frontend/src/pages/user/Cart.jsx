@@ -5,13 +5,13 @@ import LoadingScreen from '../../layout/LoadingScreen';
 import BackButton from '../../components/common/BackButton';
 import { FaTrash } from 'react-icons/fa';
 import { useNavigate } from 'react-router';
-import { FaShoppingCart } from "react-icons/fa";
+// import { FaShoppingCart } from "react-icons/fa";
+import EmptyCart from '../../layout/EmptyCart';
 export default function Cart() {
     const { cart, cartLoading, updateCart,deleteCart,removeFromCart } = useCart();
     const [updatedProducts, setUpdatedProducts] = useState([]);
     const [deletingId,setIsDeletingId] = useState(null);
     const navigate = useNavigate()
-    console.log(cart);
     const handleSave = async () => {
         try {
             const res = await updateCart(updatedProducts);
@@ -95,15 +95,6 @@ export default function Cart() {
         <LoadingScreen message={"Loading Cat"}/>
         )
     }
-    // if(!cart)
-    // {
-    //     return (
-    //         <div className="flex h-screen items-center justify-center text-red-500 text-lg font-medium">
-    //             cart does not found
-    //         </div>
-    //     );
-    // }
-
     return (
         <div className="min-h-screen bg-gray-50 p-6">
             <div className="max-w-4xl mx-auto">
@@ -113,27 +104,8 @@ export default function Cart() {
                     Your Cart
                 </h1>
              {cart && cart.items?.length === 0 || !cart && (
-            <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 bg-white py-16 px-6 text-center shadow-sm">
-                <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-blue-100">
-                <FaShoppingCart className="text-4xl text-blue-600" />
-                </div>
-
-                <h2 className="text-2xl font-bold text-gray-800">
-                 {!cart? "You do not have cart":"Your cart is empty"} 
-                </h2>
-
-                <p className="mt-2 max-w-md text-gray-500">
-                Looks like you haven't added any products yet. Start shopping and add
-                your favorite products to your cart.
-                </p>
-
-                <button
-                onClick={() => navigate("/shop")}
-                className="mt-8 rounded-lg bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700 hover:shadow-lg"
-                >
-                Continue Shopping
-                </button>
-            </div>)} 
+                <EmptyCart/>
+            )} 
 
                 {/* Cart Items */}
                 <div className="space-y-4">
@@ -217,7 +189,7 @@ export default function Cart() {
                 </div>
 
                 {/* Summary */}
-               {cart?.length===0 && <div className="mt-6 bg-white border rounded-lg p-4">
+               {cart?.length!==0 && <div className="mt-6 bg-white border rounded-lg p-4">
                     <p className="text-gray-700">
                         <span className="font-semibold">Total Amount:</span>{" "}
                         {displayedItem.reduce(
@@ -235,7 +207,7 @@ export default function Cart() {
                  }
 
                 {/* Actions */}
-                {cart?.length===0 && <div className="mt-6 flex gap-4">
+                {cart?.length!==0 && <div className="mt-6 flex gap-4">
                     <button
                         onClick={handleSave}
                         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition disabled:bg-red-300 disabled:cursor-not-allowed"
@@ -244,7 +216,7 @@ export default function Cart() {
                         Save Cart
                     </button>
 
-                    <button
+                    <button onClick={()=>navigate("/order")}
                         className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
                     >
                         Proceed to Checkout
