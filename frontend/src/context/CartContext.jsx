@@ -172,44 +172,6 @@ export const CartProvider = ({children})=>
         return {success:true,message:"Cart deleted successfully"}
     }
 
-    const updateCartQuantity = async (productId,quantity)=>
-    {
-        if(user)
-        {
-            try
-            {
-                setCartLoading(true);
-                const res = await axios.put(`/api/cart/updatecartquantity`,{productId:productId,quantity:quantity});
-                setCart(res.data.cart);
-                return {success:true,message:"Cart quantity updated successfully"}
-            }
-            catch(error)
-            {
-                return {success:false,message:error.response?.data?.message || "failed to update cart quantity"}
-            }
-            finally
-            {
-                setCartLoading(false)
-            }
-        }
-        else
-        {
-            let localCart = JSON.parse(localStorage.getItem('cart'))|| {items:[],totalAmount:0,totalItems:0};
-            if(localCart.items.length===0)
-            {
-                return {success:false,message:"Cart does not found"};
-            }
-            const productIndex = localCart.items.findIndex((item)=>item.product._id===productId);
-            if(productIndex === -1)
-            {
-                return {success:false,message:"product not found in cart"}
-            }
-            localCart.items[productIndex].quantity=quantity;
-            const updated = updateCartTool(localCart);
-            saveCart(updated);
-            return {success:true,message:"Cart quantity updated successfully"}
-        }
-    }
     const updateCart = async (updatedItems) =>
     {
 
@@ -261,7 +223,7 @@ export const CartProvider = ({children})=>
     }
 }
     return (
-        <cartContext.Provider value ={{cart,updateCartQuantity,updateCart,removeFromCart,addToCart,cartLoading,deleteCart}}>
+        <cartContext.Provider value ={{cart,updateCart,removeFromCart,addToCart,cartLoading,deleteCart}}>
             {children}
         </cartContext.Provider>
     )
