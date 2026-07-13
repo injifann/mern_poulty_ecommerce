@@ -120,6 +120,7 @@ export default function Profile() {
         setIsDeletingAccount(true);
         const res = await axios.delete("api/user/deleteprofile");
         localStorage.removeItem("token");
+        setUser(null);
         toast.success(res.data.message);
         navigate("/")
         
