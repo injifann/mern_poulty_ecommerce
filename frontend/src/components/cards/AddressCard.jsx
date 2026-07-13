@@ -1,9 +1,11 @@
 import React, { useState } from 'react'
 import toast from 'react-hot-toast';
 import axios from '../../api/axios'
+import { useAuth } from '../../context/AuthContext';
 
 export default function AddressCard({userAddress,setUserAddress}) 
 {
+  const {user} = useAuth();
   const [addressData,setAddressData] = useState(userAddress??{fullName:"",addressLine1:"",addressLine2:"",city:"",state:"",postalCode:"",country:"" ,phone:''});
   const [isSubmitting,setIsSubmitting] = useState(false)
 
@@ -46,6 +48,11 @@ export default function AddressCard({userAddress,setUserAddress})
  const handleSubmit = async(e)=>
  {
   e.preventDefault();
+  if(!user)
+  {
+    toast.error("please create profile first");
+    return;
+  }
    const validatedAddress = validateData();
    if(validatedAddress)
    {
@@ -76,8 +83,7 @@ export default function AddressCard({userAddress,setUserAddress})
    {
      setIsSubmitting(false)
    }
-  }
-   
+  }   
  }
   return (
   <div className="flex justify-center px-4 py-10 bg-gray-50 min-h-screen">
