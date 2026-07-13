@@ -13,14 +13,12 @@ export const getMyCart = async (req,res,next)=>
   try
   {
     let cart = await findCart(req.user._id,true);
-    if(!cart)
+    if(cart)
     {
-      return sendErrorResponse(res,404,"cart not found");
+      cart = await cart.populate("items.product","title images");
+      return sendCartResponse(res,200,"cart successfully fetched",cart);
     }
-    
-    const populatedCart = await cart.populate("items.product","title images");
-    return sendCartResponse(res,200,"cart successfully fetched",populatedCart);
-
+    return res.status(200).json({message:"successful",cart});
   }
   catch(error)
   {
@@ -63,7 +61,6 @@ export const updateCart = async (req,res,next) =>
         }
     }
 
-
      const updates = new Map(updatedItems.map((item)=>[
       item.product._id.toString(),
       item.quantity,
@@ -78,9 +75,9 @@ export const updateCart = async (req,res,next) =>
        }
       }
 
-    (await cart.save()).populate("items.product","title images");
-    return sendCartResponse(res,200,"successfully updated cart",cart);
-    
+      await cart.save()
+      cart = await cart.populate("items.product","title images");
+      return sendCartResponse(res,200,"successfully updated cart",cart);
   }
   catch(error)
   {
@@ -104,8 +101,8 @@ export const addToCart = async (req,res,next) =>
          if(!cart)
           { if(product.quantity<validQuantity){ return sendErrorResponse(res,400,"in sufficient stock");}
             cart = await Cart.create({user:req.user._id,items:[{product:productId,quantity:quantity,priceAtTimeOfOrder:product.price}]});
-            await cart.populate("items.product","title images");
-            sendCartResponse(res,201,"cart successfully created",cart);
+            cart = await cart.populate("items.product","title images");
+           return sendCartResponse(res,201,"cart successfully created",cart);
           }
 
         const existItemIndex = cart.items.findIndex((item)=>item.product.toString()===productId);
@@ -121,8 +118,8 @@ export const addToCart = async (req,res,next) =>
             cart.items.push({product:productId,quantity:validQuantity,priceAtTimeOfOrder:product.price})
         }
         cart = await cart.save();
-        await cart.populate("items.product","title images");
-        sendCartResponse(res,200,"cart successfully updated",cart);
+        cart = await cart.populate("items.product","title images");
+        return sendCartResponse(res,200,"cart successfully updated",cart);
 
     }
     catch(error)
@@ -150,7 +147,7 @@ export const RemoveProductFromCart = async (req,res,next)=>
     cart.items = cart.items.filter(item=>item.product._id.toString()!==productId.toString());
     cart = await cart.save()
     cart = await cart.populate("items.product","title images");
-    sendCartResponse(res,200,"product removed successfully",cart);
+    return sendCartResponse(res,200,"product removed successfully",cart);
 
   }
   catch(error)
