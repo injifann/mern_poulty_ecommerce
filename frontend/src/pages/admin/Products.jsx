@@ -75,9 +75,14 @@ export default function Products() {
     {
        try
        {
+        if(!window.confirm("are you sure to delete this product"))
+        {
+          return;
+        }
          setdeletingId(productId);
-         await axios.delete(`${api}/api/admin/deleteproduct/${productId}`)
+         await axios.delete(`/api/admin/deleteproduct/${productId}`)
          setProducts((prev)=>prev.filter((product)=>product._id!==productId));
+         toast.success("product success fully deleted");
        }
        catch(error)
        {
