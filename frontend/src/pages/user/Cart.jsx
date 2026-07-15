@@ -230,7 +230,7 @@ export default function Cart() {
                         Proceed to Checkout
                     </button>
                     <button onClick={handleDelete}
-                      className="w-full rounded-lg bg-green-600 px-4 py-3 text-white transition hover:bg-green-700 sm:w-auto"                    >
+                      className="w-full rounded-lg bg-red-600 px-4 py-3 text-white transition hover:bg-green-700 sm:w-auto"                    >
                         delete
                     </button>
                 </div>
