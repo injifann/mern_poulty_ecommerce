@@ -108,7 +108,7 @@ export default function Cart() {
         )
     }
     return (
-        <div className="min-h-screen bg-gray-50 p-6">
+        <div className="min-h-screen bg-gray-50 px-4 py-6 sm:px-6">
             <div className="max-w-4xl mx-auto">
 
                 {/* Cart Title */}
@@ -124,11 +124,9 @@ export default function Cart() {
                     {displayedItem?.map((item) => (
                        <div
                             key={item?.product._id}
-                            className="flex items-center justify-between rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md"
-                            >
+                            className="flex flex-col gap-5 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition hover:shadow-md md:flex-row md:items-center md:justify-between"                            >
                             {/* Left Side */}
-                            <div className="flex items-center gap-4 flex-1">
-
+                             <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left flex-1">
                                 {/* Product Image */}
                                 <img
                                 src={item?.product?.images?.[0].url}
@@ -137,7 +135,7 @@ export default function Cart() {
                                 />
 
                                 {/* Product Details */}
-                                <div>
+                                <div >
                                 <h3 className="text-lg font-semibold text-gray-800">
                                     {item?.product.title}
                                 </h3>
@@ -153,8 +151,7 @@ export default function Cart() {
                             </div>
 
                             {/* Right Side */}
-                            <div className="flex items-center gap-5">
-
+                           <div className="flex w-full flex-col items-center gap-4 sm:flex-row sm:justify-end md:w-auto">
                                 {/* Quantity */}
                                 <div className="flex items-center overflow-hidden rounded-lg border border-gray-300">
 
@@ -181,7 +178,7 @@ export default function Cart() {
                                 </div>
 
                                 {/* Item Total */}
-                                <div className="w-24 text-right">
+                            <div className="text-center sm:w-24 sm:text-right">
                                 <p className="font-semibold text-gray-800">
                                     ${(item.quantity * item.priceAtTimeOfOrder).toFixed(2)}
                                 </p>
@@ -201,7 +198,7 @@ export default function Cart() {
                 </div>
 
                 {/* Summary */}
-               {cart && cart?.items?.length!==0 && <div className="mt-6 bg-white border rounded-lg p-4">
+               {cart && cart?.items?.length!==0 && <div className="mt-6 rounded-xl border bg-white p-5 shadow-sm">
                     <p className="text-gray-700">
                         <span className="font-semibold">Total Amount:</span>{" "}
                         {displayedItem.reduce(
@@ -219,23 +216,21 @@ export default function Cart() {
                  }
 
                 {/* Actions */}
-                {cart && cart?.items?.length!==0 && <div className="mt-6 flex gap-4">
+                {cart && cart?.items?.length!==0 && <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                     <button
                         onClick={handleSave}
-                        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition disabled:bg-red-300 disabled:cursor-not-allowed"
+                       className="w-full rounded-lg bg-blue-600 px-4 py-3 text-white transition hover:bg-blue-700 sm:w-auto"
                         disabled={updatedProducts.length==0}
                     >
                         Save Cart
                     </button>
 
                     <button onClick={handleProcedToCheckout}
-                        className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
-                    >
+                        className="w-full rounded-lg bg-green-600 px-4 py-3 text-white transition hover:bg-green-700 sm:w-auto"                    >
                         Proceed to Checkout
                     </button>
                     <button onClick={handleDelete}
-                        className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-400 transition "
-                    >
+                      className="w-full rounded-lg bg-green-600 px-4 py-3 text-white transition hover:bg-green-700 sm:w-auto"                    >
                         delete
                     </button>
                 </div>
