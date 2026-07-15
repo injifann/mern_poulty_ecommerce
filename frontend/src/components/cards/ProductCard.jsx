@@ -106,7 +106,7 @@ export default function ProductCard({ product }) {
           onClick={() => handleAddToCart(quantity,product._id)} disabled={product.status === "out_of_stock" || product._id ===addingId}
           className="rounded-lg bg-indigo-600 px-5 py-2 font-medium text-white transition hover:bg-indigo-700 active:scale-95 disabled:bg-black"
         >
-         {product._id===addingId?"adding to cart":"add to cart"}
+         {product._id===addingId?"adding...":"add to cart"}
         </button>
       </div>
     </div>
