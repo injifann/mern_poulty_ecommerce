@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 
 export default function Order() {
  const {cart} = useCart();
- const [userAddress,setUserAddress] = useState({});
+ const [userAddress,setUserAddress] = useState(null);
  const [error,setError] = useState("");
 
  useEffect(()=>{
@@ -96,14 +96,29 @@ export default function Order() {
               </div>
 
                 {/* Shipping */}
-                <div className="rounded-xl bg-white p-6 shadow">
+              <div className="rounded-xl bg-white p-6 shadow">
 
-                    <h2 className="mb-5 text-xl font-semibold">
-                        Shipping Address
-                    </h2>
+                  <h2 className="mb-5 text-xl font-semibold">
+                      Shipping Address
+                  </h2>
+                {userAddress ? (
+                  <div className="space-y-1 text-gray-700">
+                    <p>{userAddress.fullName}</p>
+                    <p>{userAddress.addressLine1}</p>
 
-                    <AddressCard />
+                    {userAddress.addressLine2 && (
+                      <p>{userAddress.addressLine2}</p>
+                    )}
 
+                    <p>
+                      {userAddress.city}, {userAddress.state}
+                    </p>
+
+                    <p>{userAddress.phone}</p>
+                  </div>
+                ) : (
+                  <AddressCard setUserAddress={setUserAddress}/>
+                )}
                 </div>
 
             </div>
