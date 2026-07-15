@@ -58,7 +58,6 @@ export default function AddressCard({userAddress,setUserAddress})
    {
    try
    {
-    console.log(addressData);
      setIsSubmitting(true)
      let res;
      if(userAddress)
@@ -73,7 +72,7 @@ export default function AddressCard({userAddress,setUserAddress})
 
      }
      setUserAddress(res.data.address);
-     toast.success(res.data.message);
+     toast.success(res.data?.message || "success fully added");
    }
    catch(error)
    {
