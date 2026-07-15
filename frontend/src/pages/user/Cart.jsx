@@ -219,8 +219,8 @@ export default function Cart() {
                 {cart && cart?.items?.length!==0 && <div className="mt-6 flex flex-col gap-3 sm:flex-row">
                     <button
                         onClick={handleSave}
-                       className="w-full rounded-lg bg-blue-600 px-4 py-3 text-white transition hover:bg-blue-700 sm:w-auto"
-                        disabled={updatedProducts.length==0}
+                       className="w-full rounded-lg bg-blue-600 px-4 py-3 text-white transition hover:bg-blue-700 sm:w-auto disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-60"
+                        disabled={updatedProducts.length===0}
                     >
                         Save Cart
                     </button>
