@@ -40,7 +40,6 @@ export const getAllCategory  = async (_,res,next)=>
 export const addCategory = async (req,res,next) =>
 {
    const {name,description,parent} = req.body;
-
    if(!name)  
    {
     return sendErrorResponse(res,400,"Please Enter category name");
