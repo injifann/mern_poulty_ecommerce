@@ -194,7 +194,7 @@ export default function Profile() {
           </p>
 
           <Link
-            to="/orders"
+            to="/order"
             className="inline-block mt-5 text-blue-600 hover:underline font-medium"
           >
             View Your Orders
