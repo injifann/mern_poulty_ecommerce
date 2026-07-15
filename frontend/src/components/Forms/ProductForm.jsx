@@ -128,9 +128,8 @@ export default function ProductForm({product,setProducts, setIsUpdateProduct,set
     )
    }
 return (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-
-    <div className="w-full max-w-2xl rounded-xl bg-white shadow-2xl">
+ <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/50 p-4">
+  <div className="my-8 w-full max-w-2xl rounded-xl bg-white shadow-2xl max-h-[90vh] overflow-hidden">
 
       {/* Header */}
       <div className="border-b px-6 py-4">
@@ -145,7 +144,7 @@ return (
 
       <form
         onSubmit={handleSubmit}
-        className="space-y-5 p-6"
+        className="max-h-[calc(90vh-80px)] overflow-y-auto space-y-5 p-6"
       >
 
         <div>
