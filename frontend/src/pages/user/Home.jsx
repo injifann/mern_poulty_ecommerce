@@ -59,13 +59,13 @@ const fetchProducts = async () => {
             to your doorstep. Clean, fresh, and affordable — every day.
           </p>
 
-          <div className="mt-6 flex gap-4">
-            <button onClick={()=>navigate("/shop")} className="flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 font-medium text-white transition hover:bg-indigo-700">
+          <div className="mt-6 flex gap-2 sm:gap-4">
+            <button onClick={()=>navigate("/shop")} className="flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700 sm:px-6 sm:py-3 sm:text-base">
               Shop Now
               <FiArrowRight />
             </button>
 
-            <button onClick={()=>toast.success("this is demo app and only for demonstration")} className="flex items-center gap-2 rounded-lg border border-gray-300 px-6 py-3 text-gray-700 transition hover:bg-gray-100">
+            <button onClick={()=>toast.success("this is demo app and only for demonstration")} className="flex items-center justify-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm text-gray-700 transition hover:bg-gray-100 sm:px-6 sm:py-3 sm:text-base">
               <FiInfo />
               Learn More
             </button>
@@ -150,7 +150,7 @@ const fetchProducts = async () => {
             products. Limited time offer for new customers.
           </p>
 
-        <button onClick={()=>toast.success("this is dema app")} className="mt-6 flex items-center gap-2 rounded-lg bg-white px-6 py-3 font-semibold text-indigo-600 transition hover:bg-gray-100">
+        <button onClick={()=>toast.success("this is dema app")} className="mx-auto mt-6 flex items-center gap-2 rounded-lg bg-white px-6 py-3 font-semibold text-indigo-600 transition hover:bg-gray-100">
           Join Now
           <FiArrowRight />
         </button>
