@@ -23,7 +23,7 @@ export default function Register() {
      else 
      {
         const res = await register(formData);
-        if(res.success===false)
+        if(res?.success===false)
         {
           toast.error(res.message || "Failed to register");
         }
