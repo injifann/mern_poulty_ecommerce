@@ -40,11 +40,12 @@ export const getAllCategory  = async (_,res,next)=>
 export const addCategory = async (req,res,next) =>
 {
    const {name,description,parent} = req.body;
+
    if(!name)  
    {
     return sendErrorResponse(res,400,"Please Enter category name");
    }
-   if(parent && !isValidObjectId(id))
+   if(parent && !isValidObjectId(parent))
    {
        return sendErrorResponse(res,400,"invalid parent id");
    }
@@ -111,7 +112,7 @@ export const updateCategory = async (req,res,next)=>
 
       if(description) updateCategory.description = description;
       const updatedCategory = await Category.findByIdAndUpdate(categoryId,updateCategory,{new:true});
-      return res.status(200).json({message:"successfully updated category",updatedCategory});
+      return res.status(200).json({message:"successfully updated category",category:updatedCategory});
 
     }
     catch(error)
