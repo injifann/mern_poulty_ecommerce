@@ -14,7 +14,10 @@ const app = express();
 dotenv.config();
 const port=process.env.PORT || 5001;
 app.use(express.json());
-app.use(cors());
+app.use(cors({origin:[
+      'https://mern-poulty-ecommerce-rosy.vercel.app',
+      'http://localhost:5173',
+]}));
 app.use("/uploads", express.static("uploads"));
 app.use("/api/user",userRouter);
 app.use("/api/admin",adminRoutes);
