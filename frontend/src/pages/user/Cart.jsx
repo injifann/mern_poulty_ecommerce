@@ -186,8 +186,8 @@ export default function Cart() {
 
                                 {/* Delete */}
                                 <button
-                                disabled={item.product._id === deletingId}
-                                onClick={() => handleRemoveFromCart(item.product._id)}
+                                disabled={item?.product?._id === deletingId}
+                                onClick={() => handleRemoveFromCart(item?.product?._id)}
                                 className="flex h-10 w-10 items-center justify-center rounded-lg text-red-500 transition hover:bg-red-100 hover:text-red-600 disabled:opacity-50"
                                 >
                                 <FaTrash />
