@@ -164,11 +164,11 @@ The application is fully responsive and optimized for desktop, tablet, and mobil
 ![cart page](screenshots/cartpage.png)
 ## shop page
 ![shop page](screenshots/shoppage.png)
-## product contrroll page 
+## product controll page 
 ![product contrroll page](screenshots/adminproductpage.png)
 ## product details  page 
 ![product details  page](screenshots/productdetailspage.png)
-## user contrroll page 
+## user controll page 
 ![user contrroll page](screenshots/adminusermanagement.png)
 ## user profile page 
 ![user profile page](screenshots/profilepage.png)
