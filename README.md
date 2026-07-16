@@ -14,6 +14,10 @@ The application includes separate user and admin experiences, allowing customers
 
 ---
 
+## 🌐 Live Demo
+
+https://mern-poulty-ecommerce-rosy.vercel.app
+
 ## ✨ Features
 
 ### Customer Features
