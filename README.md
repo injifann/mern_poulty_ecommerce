@@ -2,8 +2,7 @@
 
 A full-stack MERN e-commerce application for purchasing fresh poultry products online. The platform provides a complete shopping experience for customers while offering an administrative dashboard for managing products, categories, inventory, and orders.
 
-> Project Status: 🚧 In Progress
-> Core e-commerce functionality has been implemented, and additional features are currently under development.
+> Project Status: 🚧 completed
 
 ---
 
@@ -38,6 +37,8 @@ The application includes separate user and admin experiences, allowing customers
 * Delete products
 * Upload product images
 * Manage product categories
+* Manage users
+
 
 ---
 
@@ -77,15 +78,15 @@ client/
 ├── layouts/
 ├── pages/
 
+
 server/
-│
+├── config/
 ├── controllers/
 ├── middleware/
 ├── models/
 ├── routes/
 ├── utils/
-├── config/
-└── uploads/
+└── server.js
 ```
 
 ---
@@ -101,6 +102,11 @@ The application supports multiple authentication methods:
 * Role-based access control for administrators
 
 ---
+## 🔍 Product Discovery
+
+* Product search
+* Product filtering
+* Product sorting
 
 ## 🛒 Shopping Cart
 
@@ -123,8 +129,6 @@ Administrators can:
 * Delete products
 * Upload product images
 * Assign categories
-* Manage inventory levels
-* Control product availability
 
 ---
 
@@ -134,7 +138,6 @@ Customers can:
 
 * Add delivery addresses
 * Edit existing addresses
-* Delete saved addresses
 * Select a shipping address during checkout
 
 ---
@@ -154,11 +157,23 @@ The application is fully responsive and optimized for desktop, tablet, and mobil
 ## home page
 ![home page](screenshots/Screenshot%20(70).png);
 ## cart page
-![cart page](screenshots/Screenshot%20(71).png)
+![cart page](screenshots/cartpage.png)
 ## shop page
-![shop page](screenshots/Screenshot%20(69).png)
-## product page
-![admin page to add product](screenshots/Screenshot%20(68).png)
+![shop page](screenshots/shoppage.png)
+## product contrroll page 
+![product contrroll page](screenshots/adminproductpage.png)
+## product details  page 
+![product details  page](screenshots/productdetailspage.png)
+## user contrroll page 
+![user contrroll page](screenshots/adminusermanagement.png)
+## user profile page 
+![user profile page](screenshots/profilepage.png)
+
+## product adding form
+![user profile page](screenshots/productaddingform.png)
+
+## Empty cart page
+![user profile page](screenshots/emptycartpage.png)
 
 ## 🚀 Installation
 
@@ -245,10 +260,6 @@ Through this project I gained practical experience with:
 ---
 
 ## 🚧 Planned Features
-
-* Product search
-* Product filtering and sorting
-* Wishlist
 * Order status tracking
 * Email notifications
 
