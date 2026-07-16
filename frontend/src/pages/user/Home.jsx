@@ -120,7 +120,7 @@ const fetchProducts = async () => {
             <p className="truncate">Failed to fetch featured products</p>
 
           <button
-            onClick={fetchProducts}
+            onClick={()=>{setError(''),fetchProducts}}
             className="flex items-center gap-2 rounded-md bg-red-600 px-3 py-1 text-xs font-medium text-white transition hover:bg-red-700"
           >
             <FiRefreshCw />
