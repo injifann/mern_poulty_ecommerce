@@ -123,13 +123,13 @@ export default function Cart() {
                 <div className="space-y-4">
                     {displayedItem?.map((item) => (
                        <div
-                            key={item?.product._id}
+                            key={item?.product?._id}
                             className="flex flex-col gap-5 rounded-xl border border-gray-200 bg-white p-4 shadow-sm transition hover:shadow-md md:flex-row md:items-center md:justify-between"                            >
                             {/* Left Side */}
                              <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left flex-1">
                                 {/* Product Image */}
                                 <img
-                                src={item?.product?.images?.[0].url}
+                                src={item?.product?.images?.[0]?.url}
                                 alt={item?.product?.title}
                                 className="h-24 w-24 rounded-lg border object-cover"
                                 />
